@@ -1,10 +1,11 @@
 package co.edu.uniquindio.proyectobases.repository;
 
-import co.edu.uniquindio.proyectobases.dtos.UsuarioDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+
+import co.edu.uniquindio.proyectobases.dto.UsuarioDto;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

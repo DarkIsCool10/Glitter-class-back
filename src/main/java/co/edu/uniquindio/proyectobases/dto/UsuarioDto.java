@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dtos;
+package co.edu.uniquindio.proyectobases.dto;
 
 import java.time.LocalDateTime;
 public record UsuarioDto(
