@@ -11,6 +11,5 @@ public record PreguntaDto(
     Long idVisibilidad,
     Long idDocente,
     Long idUnidad,
-    String estado // sigue siendo un VARCHAR
+    Long idEstado
 ) {}
-

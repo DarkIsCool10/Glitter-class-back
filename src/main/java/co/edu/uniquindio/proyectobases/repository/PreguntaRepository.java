@@ -36,11 +36,11 @@ public class PreguntaRepository {
                     new SqlParameter("p_idVisibilidad", Types.NUMERIC),
                     new SqlParameter("p_idDocente", Types.NUMERIC),
                     new SqlParameter("p_idUnidad", Types.NUMERIC),
-                    new SqlParameter("p_estado", Types.VARCHAR),
+                    new SqlParameter("p_idEstado", Types.NUMERIC), // CAMBIADO
                     new SqlOutParameter("p_idPregunta", Types.NUMERIC),
                     new SqlOutParameter("p_resultado", Types.NUMERIC)
                 );
-
+    
             MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_enunciado", dto.enunciado())
                 .addValue("p_idTema", dto.idTema())
@@ -52,21 +52,21 @@ public class PreguntaRepository {
                 .addValue("p_idVisibilidad", dto.idVisibilidad())
                 .addValue("p_idDocente", dto.idDocente())
                 .addValue("p_idUnidad", dto.idUnidad())
-                .addValue("p_estado", dto.estado());
-
+                .addValue("p_idEstado", dto.idEstado()); // CAMBIADO
+    
             Map<String, Object> result = jdbcCall.execute(params);
-
+    
             Number estado = (Number) result.get("p_resultado");
             Number idPregunta = (Number) result.get("p_idPregunta");
-
+    
             if (estado != null && estado.intValue() == 1) {
                 return Optional.ofNullable(idPregunta != null ? idPregunta.longValue() : null);
             }
         } catch (Exception e) {
-            // Puedes agregar un log aquí
+            
         }
-
+    
         return Optional.empty();
-    }
+    }    
 }
 
