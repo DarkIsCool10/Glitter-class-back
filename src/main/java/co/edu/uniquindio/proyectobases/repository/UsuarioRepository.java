@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto;
+import io.micrometer.common.lang.NonNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ public class UsuarioRepository {
 
     private static class UsuarioRowMapper implements RowMapper<UsuarioDto> {
         @Override
-        public UsuarioDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public UsuarioDto mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
             Timestamp timestamp = rs.getTimestamp("FECHAREGISTRO");
             LocalDateTime fechaRegistro = timestamp != null ? timestamp.toLocalDateTime() : null;
             int activo = rs.getInt("ACTIVO");

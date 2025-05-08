@@ -1,6 +1,8 @@
 package co.edu.uniquindio.proyectobases.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Data
+@Getter
+@Setter
 @Entity
 @Table(name = "CREDENCIALESACCESO")
 public class Credenciales {

@@ -5,29 +5,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import co.edu.uniquindio.proyectobases.dto.LoginDto;
+import co.edu.uniquindio.proyectobases.dto.LoginResponseDto;
 import co.edu.uniquindio.proyectobases.model.Credenciales;
 import co.edu.uniquindio.proyectobases.service.LoginService;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/login")
-public class LoginController {
+@RequestMapping("/api/autorizacion")
+@CrossOrigin(origins = {"http://localhost:4200", "*"})
+public class AutorizacionController {
 
     @Autowired
     private LoginService loginService;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto logindto) {
         Optional<Credenciales> cred = loginService.login(logindto.correo(), logindto.contrasena());
         if (cred.isPresent()) {
             Credenciales c = cred.get();
             return ResponseEntity.ok(
-                new Object() {
-                    public final Long idUsuario = c.getIdUsuario();
-                    public final Long idRol = c.getIdRol();
-                    public final String correo = c.getCorreo();
-                }
+                new LoginResponseDto(c.getIdUsuario(), c.getIdRol(), c.getCorreo())
             );
         }
         return ResponseEntity.status(401).body("Credenciales incorrectas");
