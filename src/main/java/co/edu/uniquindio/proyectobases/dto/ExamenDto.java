@@ -1,6 +1,6 @@
 package co.edu.uniquindio.proyectobases.dto;
-
-import java.security.Timestamp;
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record ExamenDto(
     Long idGrupo,
@@ -11,8 +11,10 @@ public record ExamenDto(
     Integer cantidadPreguntas,
     Integer preguntasMostradas,
     Integer tiempoLimite,
-    Timestamp fechaDisponible,
-    Timestamp fechaCierre,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime fechaDisponible,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    LocalDateTime fechaCierre,
     Double pesoEnCurso,
     Double umbralAprobacion,
     Integer aleatorizarPreguntas,

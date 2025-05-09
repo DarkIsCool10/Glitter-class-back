@@ -1,7 +1,6 @@
 package co.edu.uniquindio.proyectobases.repository;
 
 import java.util.Optional;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Map;
 
@@ -41,7 +40,6 @@ public class ExamenRepository {
                 new SqlParameter("p_umbralAprobacion", Types.DOUBLE),
                 new SqlParameter("p_aleatorizarPreguntas", Types.NUMERIC),
                 new SqlParameter("p_mostrarResultados", Types.NUMERIC),
-                new SqlParameter("p_modo", Types.VARCHAR),
                 new SqlParameter("p_idUnidad", Types.NUMERIC),
                 new SqlParameter("p_idEstado", Types.NUMERIC),
                 new SqlOutParameter("p_idExamen", Types.NUMERIC),
@@ -63,7 +61,6 @@ public class ExamenRepository {
             .addValue("p_umbralAprobacion", dto.umbralAprobacion())
             .addValue("p_aleatorizarPreguntas", dto.aleatorizarPreguntas())
             .addValue("p_mostrarResultados", dto.mostrarResultados())
-            .addValue("p_modo", dto.modo())
             .addValue("p_idUnidad", dto.idUnidad())
             .addValue("p_idEstado", dto.idEstado());
 
