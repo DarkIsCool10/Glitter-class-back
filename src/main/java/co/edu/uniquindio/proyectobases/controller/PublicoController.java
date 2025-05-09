@@ -11,7 +11,7 @@ import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
 
 @RestController
-@RequestMapping("/api/publico")
+@RequestMapping("/api/public")
 @CrossOrigin(origins = {"http://localhost:4200", "*"})
 public class PublicoController {
 

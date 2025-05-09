@@ -9,7 +9,7 @@ public record UsuarioDetalleDto(
     String nombre,
     String apellido,
     String correo,
-    Long idUnidad,
+    String nombreUnidad,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime fechaRegistro,
     String estado,
