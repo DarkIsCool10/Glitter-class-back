@@ -1,6 +1,5 @@
 package co.edu.uniquindio.proyectobases.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +15,11 @@ import java.util.Optional;
 @CrossOrigin(origins = {"http://localhost:4200", "*"})
 public class AutorizacionController {
 
-    @Autowired
-    private LoginService loginService;
+    private final LoginService loginService;
+
+    public AutorizacionController(LoginService loginService){
+        this.loginService = loginService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto logindto) {
