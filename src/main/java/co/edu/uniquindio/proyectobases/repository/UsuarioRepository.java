@@ -69,7 +69,7 @@ public class UsuarioRepository {
             new SqlOutParameter("p_nombre", Types.VARCHAR),
             new SqlOutParameter("p_apellido", Types.VARCHAR),
             new SqlOutParameter("p_correo", Types.VARCHAR),
-            new SqlOutParameter("p_nombreUnidad", Types.VARCHAR),
+            new SqlOutParameter("p_unidad", Types.VARCHAR),
             new SqlOutParameter("p_fechaRegistro", Types.TIMESTAMP),
             new SqlOutParameter("p_estado", Types.VARCHAR),
             new SqlOutParameter("p_idRol", Types.NUMERIC),
@@ -89,7 +89,7 @@ public class UsuarioRepository {
                     (String) result.get("p_nombre"),
                     (String) result.get("p_apellido"),
                     (String) result.get("p_correo"),
-                    (String) result.get("p_nombreUnidad"),
+                    (String) result.get("p_unidad"),
                     ((Timestamp) result.get("p_fechaRegistro")).toLocalDateTime(),
                     (String) result.get("p_estado"),
                     ((Number) result.get("p_idRol")).longValue()
