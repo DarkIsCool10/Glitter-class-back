@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.PublicoRepository;
 import co.edu.uniquindio.proyectobases.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
-import co.edu.uniquindio.proyectobases.dto.CategoriaDto;
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.DocenteCursoDto;
+import co.edu.uniquindio.proyectobases.dto.EstudianteCursoDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
 
 @Service
@@ -26,9 +28,9 @@ public class PublicoService {
             .orElseGet(() -> new MensajeDto<>(true, "Usuario no encontrado"));
     }
 
-    public MensajeDto<List<CategoriaDto>> obtenerCategorias(){
-        List<CategoriaDto> categorias = publicoRepository.listarCategorias();
-        return new MensajeDto<List<CategoriaDto>>(false, categorias);
+    public MensajeDto<List<TemaDto>> obtenerTemas(){
+        List<TemaDto> temas = publicoRepository.listarTemas();
+        return new MensajeDto<>(false, temas);
     }
 
     public MensajeDto<List<CursoDto>> obtenerCursos() {
@@ -44,6 +46,14 @@ public class PublicoService {
     public MensajeDto<List<TipoPreguntaDto>> obtenerTipos() {
         List<TipoPreguntaDto> tipo = publicoRepository.listarTipos();
         return new MensajeDto<>(false, tipo);
+    }
+
+    public MensajeDto<List<DocenteCursoDto>> obtenerCursosDocente(Long idDocente) {
+        return new MensajeDto<>(false, publicoRepository.listarCursosDocente(idDocente));
+    }
+
+    public MensajeDto<List<EstudianteCursoDto>> obtenerCursosEstudiante(Long idEstudiante) {
+        return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idEstudiante));
     }
     
 }

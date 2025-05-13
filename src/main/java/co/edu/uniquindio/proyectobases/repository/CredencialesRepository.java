@@ -1,14 +1,14 @@
 package co.edu.uniquindio.proyectobases.repository;
 
-import co.edu.uniquindio.proyectobases.model.Credenciales;
+import co.edu.uniquindio.proyectobases.dto.LoginResponseDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -21,33 +21,36 @@ public class CredencialesRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Optional<Credenciales> validarLogin(String correo, String contrasena) {
-    SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-        .withProcedureName("validar_login")
-        .declareParameters(
-            new SqlParameter("p_correo", Types.VARCHAR),
-            new SqlParameter("p_contrasena", Types.VARCHAR),
-            new SqlOutParameter("p_result", Types.INTEGER),
-            new SqlOutParameter("p_idusuario", Types.INTEGER),
-            new SqlOutParameter("p_idrol", Types.INTEGER)
-        );
+    public Optional<LoginResponseDto> validarLogin(String correo, String contrasena) {
+        try {
+            SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("validar_login")
+                .declareParameters(
+                    new SqlParameter("p_correo", Types.VARCHAR),
+                    new SqlParameter("p_contrasena", Types.VARCHAR),
+                    new SqlOutParameter("p_result", Types.INTEGER),
+                    new SqlOutParameter("p_idusuario", Types.NUMERIC),
+                    new SqlOutParameter("p_idrol", Types.NUMERIC)
+                );
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("p_correo", correo);
-        params.put("p_contrasena", contrasena);
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("p_correo", correo)
+                .addValue("p_contrasena", contrasena);
 
-        Map<String, Object> result = jdbcCall.execute(params);
+            Map<String, Object> result = jdbcCall.execute(params);
 
-        Number resultCode = (Number) result.get("p_result");
-        if (resultCode != null && resultCode.intValue() == 1) {
-            Credenciales cred = new Credenciales();
-            cred.setIdUsuario(((Number) result.get("p_idusuario")).longValue());
-            cred.setIdRol(((Number) result.get("p_idrol")).longValue());
-            cred.setCorreo(correo);
-            cred.setContrasena(contrasena);
-            return Optional.of(cred);
+            Number resultCode = (Number) result.get("p_result");
+
+            if (resultCode != null && resultCode.intValue() == 1) {
+                Long idUsuario = ((Number) result.get("p_idusuario")).longValue();
+                Integer idRol = ((Number) result.get("p_idrol")).intValue();
+                return Optional.of(new LoginResponseDto(idUsuario, idRol, correo));
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error en validarLogin: " + e.getMessage());
         }
+
         return Optional.empty();
     }
-
 }

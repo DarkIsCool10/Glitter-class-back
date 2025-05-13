@@ -28,7 +28,6 @@ public class PreguntaRepository {
                 .declareParameters(
                     new SqlParameter("p_enunciado", Types.CLOB),
                     new SqlParameter("p_idTema", Types.NUMERIC),
-                    new SqlParameter("p_idCategoria", Types.NUMERIC),
                     new SqlParameter("p_idDificultad", Types.NUMERIC),
                     new SqlParameter("p_idTipo", Types.NUMERIC),
                     new SqlParameter("p_tiempoMaximo", Types.NUMERIC),
@@ -44,7 +43,6 @@ public class PreguntaRepository {
             MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_enunciado", dto.enunciado())
                 .addValue("p_idTema", dto.idTema())
-                .addValue("p_idCategoria", dto.idCategoria())
                 .addValue("p_idDificultad", dto.idDificultad())
                 .addValue("p_idTipo", dto.idTipo())
                 .addValue("p_tiempoMaximo", dto.tiempoMaximo())

@@ -7,9 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import co.edu.uniquindio.proyectobases.dto.CategoriaDto;
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.DocenteCursoDto;
+import co.edu.uniquindio.proyectobases.dto.EstudianteCursoDto;
+import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
 
 @Repository
@@ -22,17 +24,17 @@ public class PublicoRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CategoriaDto> listarCategorias(){
+    public List<TemaDto> listarTemas(){
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-            .withProcedureName("listar_categorias")
+            .withProcedureName("listar_temas")
             .withoutProcedureColumnMetaDataAccess()
-            .returningResultSet("p_categorias", (rs, rowNum) -> new CategoriaDto(
-                rs.getLong("IDCATEGORIA"),
+            .returningResultSet("p_temas", (rs, rowNum) -> new TemaDto(
+                rs.getLong("IDTEMA"),
                 rs.getString("NOMBRE")
             ));
 
         Map<String, Object> result = jdbcCall.execute();
-        return (List<CategoriaDto>) result.get("p_categorias");
+        return (List<TemaDto>) result.get("p_temas");
     }
 
     @SuppressWarnings("unchecked")
@@ -78,6 +80,42 @@ public class PublicoRepository {
 
         Map<String, Object> result = jdbcCall.execute();
         return (List<TipoPreguntaDto>) result.get("p_tipos");
+    }
+
+    @SuppressWarnings("deprecation")
+    public List<DocenteCursoDto> listarCursosDocente(Long idDocente) {
+        String sql = """
+            SELECT * FROM vista_docente_curso WHERE idDocente = ?
+        """;
+
+        return jdbcTemplate.query(sql, new Object[]{idDocente}, (rs, rowNum) -> new DocenteCursoDto(
+            rs.getLong("idDocente"),
+            rs.getString("nombreDocente"),
+            rs.getLong("idCurso"),
+            rs.getString("nombreCurso"),
+            rs.getInt("creditos"),
+            rs.getString("unidadAcademica"),
+            rs.getLong("idGrupo"),
+            rs.getString("nombreGrupo")
+        ));
+    }
+
+    @SuppressWarnings("deprecation")
+    public List<EstudianteCursoDto> listarCursosEstudiante(Long idEstudiante) {
+        String sql = """
+            SELECT * FROM vista_estudiante_curso WHERE idEstudiante = ?
+        """;
+
+        return jdbcTemplate.query(sql, new Object[]{idEstudiante}, (rs, rowNum) -> new EstudianteCursoDto(
+            rs.getLong("idEstudiante"),
+            rs.getString("nombreEstudiante"),
+            rs.getLong("idCurso"),
+            rs.getString("nombreCurso"),
+            rs.getInt("creditos"),
+            rs.getString("unidadAcademica"),
+            rs.getLong("idGrupo"),
+            rs.getString("nombreGrupo")
+        ));
     }
 
 }

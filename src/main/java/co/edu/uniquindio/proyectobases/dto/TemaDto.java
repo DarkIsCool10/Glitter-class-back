@@ -1,6 +1,6 @@
 package co.edu.uniquindio.proyectobases.dto;
 
-public record CategoriaDto(
-    Long idCategoria,
+public record TemaDto(
+    Long idTema,
     String nombre
 ) {}
