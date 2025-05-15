@@ -8,8 +8,6 @@ import co.edu.uniquindio.proyectobases.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.DocenteCursoDto;
-import co.edu.uniquindio.proyectobases.dto.EstudianteCursoDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
@@ -33,10 +31,10 @@ public class PublicoService {
         return new MensajeDto<>(false, temas);
     }
 
-    public MensajeDto<List<CursoDto>> obtenerCursos() {
-        List<CursoDto> cursos = publicoRepository.listarCursos();
-        return new MensajeDto<>(false, cursos);
-    }
+    // public MensajeDto<List<CursoDto>> obtenerCursos() {
+    //     List<CursoDto> cursos = publicoRepository.listarCursos();
+    //     return new MensajeDto<>(false, cursos);
+    // }
 
     public MensajeDto<List<DificultadDto>> obtenerDificultades() {
         List<DificultadDto> dificultad = publicoRepository.listarDificultades();
@@ -48,12 +46,12 @@ public class PublicoService {
         return new MensajeDto<>(false, tipo);
     }
 
-    public MensajeDto<List<DocenteCursoDto>> obtenerCursosDocente(Long idDocente) {
-        return new MensajeDto<>(false, publicoRepository.listarCursosDocente(idDocente));
+    public MensajeDto<List<CursoDto>> obtenerCursosDocente(Long idUsuario) {
+        return new MensajeDto<>(false, publicoRepository.listarCursosDocente(idUsuario));
     }
 
-    public MensajeDto<List<EstudianteCursoDto>> obtenerCursosEstudiante(Long idEstudiante) {
-        return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idEstudiante));
+    public MensajeDto<List<CursoDto>> obtenerCursosEstudiante(Long idUsuario) {
+        return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idUsuario));
     }
     
 }

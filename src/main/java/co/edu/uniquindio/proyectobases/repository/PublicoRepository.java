@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.DocenteCursoDto;
-import co.edu.uniquindio.proyectobases.dto.EstudianteCursoDto;
 import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
 
@@ -37,22 +35,22 @@ public class PublicoRepository {
         return (List<TemaDto>) result.get("p_temas");
     }
 
-    @SuppressWarnings("unchecked")
-    public List<CursoDto> listarCursos() {
-        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-            .withProcedureName("listar_cursos")
-            .withoutProcedureColumnMetaDataAccess()
-            .returningResultSet("p_cursos", (rs, rowNum) -> new CursoDto(
-                rs.getLong("IDCURSO"),
-                rs.getString("NOMBRE"),
-                rs.getString("DESCRIPCION"),
-                rs.getInt("CREDITOS"),
-                rs.getString("UNIDADACADEMICA")
-            ));
+    // @SuppressWarnings("unchecked")
+    // public List<CursoDto> listarCursos() {
+    //     SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+    //         .withProcedureName("listar_cursos")
+    //         .withoutProcedureColumnMetaDataAccess()
+    //         .returningResultSet("p_cursos", (rs, rowNum) -> new CursoDto(
+    //             rs.getLong("IDCURSO"),
+    //             rs.getString("NOMBRE"),
+    //             rs.getString("DESCRIPCION"),
+    //             rs.getInt("CREDITOS"),
+    //             rs.getString("UNIDADACADEMICA")
+    //         ));
 
-        Map<String, Object> result = jdbcCall.execute();
-        return (List<CursoDto>) result.get("p_cursos");
-    }
+    //     Map<String, Object> result = jdbcCall.execute();
+    //     return (List<CursoDto>) result.get("p_cursos");
+    // }
     
     @SuppressWarnings("unchecked")
     public List<DificultadDto> listarDificultades() {
@@ -83,38 +81,32 @@ public class PublicoRepository {
     }
 
     @SuppressWarnings("deprecation")
-    public List<DocenteCursoDto> listarCursosDocente(Long idDocente) {
-        String sql = """
-            SELECT * FROM vista_docente_curso WHERE idDocente = ?
-        """;
-
-        return jdbcTemplate.query(sql, new Object[]{idDocente}, (rs, rowNum) -> new DocenteCursoDto(
-            rs.getLong("idDocente"),
-            rs.getString("nombreDocente"),
+    public List<CursoDto> listarCursosEstudiante(Long idUsuario) {
+        String sql = "SELECT * FROM vista_estudiante_curso WHERE idUsuario = ?";
+        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new CursoDto(
+            rs.getLong("idUsuario"),
             rs.getLong("idCurso"),
             rs.getString("nombreCurso"),
             rs.getInt("creditos"),
             rs.getString("unidadAcademica"),
             rs.getLong("idGrupo"),
-            rs.getString("nombreGrupo")
+            rs.getString("nombreGrupo"),
+            rs.getString("nombreDocente")
         ));
     }
 
     @SuppressWarnings("deprecation")
-    public List<EstudianteCursoDto> listarCursosEstudiante(Long idEstudiante) {
-        String sql = """
-            SELECT * FROM vista_estudiante_curso WHERE idEstudiante = ?
-        """;
-
-        return jdbcTemplate.query(sql, new Object[]{idEstudiante}, (rs, rowNum) -> new EstudianteCursoDto(
-            rs.getLong("idEstudiante"),
-            rs.getString("nombreEstudiante"),
+    public List<CursoDto> listarCursosDocente(Long idUsuario) {
+        String sql = "SELECT * FROM vista_docente_curso WHERE idUsuario = ?";
+        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new CursoDto(
+            rs.getLong("idUsuario"),
             rs.getLong("idCurso"),
             rs.getString("nombreCurso"),
             rs.getInt("creditos"),
             rs.getString("unidadAcademica"),
             rs.getLong("idGrupo"),
-            rs.getString("nombreGrupo")
+            rs.getString("nombreGrupo"),
+            rs.getString("nombreDocente")
         ));
     }
 

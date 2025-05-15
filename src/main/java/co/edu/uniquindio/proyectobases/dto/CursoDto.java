@@ -1,9 +1,12 @@
 package co.edu.uniquindio.proyectobases.dto;
 
 public record CursoDto(
+    Long idUsuario,
     Long idCurso,
-    String nombre,
-    String descripcion,
+    String nombreCurso,
     Integer creditos,
-    String unidadAcademica
+    String unidadAcademica,
+    Long idGrupo,
+    String nombreGrupo,
+    String nombreDocente    
 ) {}

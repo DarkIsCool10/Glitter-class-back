@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.DocenteCursoDto;
-import co.edu.uniquindio.proyectobases.dto.EstudianteCursoDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
@@ -44,10 +42,10 @@ public class PublicoController {
         return ResponseEntity.ok(publicoService.obtenerTemas());
     } 
 
-    @GetMapping("/obtener-cursos")
-    public ResponseEntity<MensajeDto<List<CursoDto>>> listarCursos() {
-        return ResponseEntity.ok(publicoService.obtenerCursos());
-    }
+    // @GetMapping("/obtener-cursos")
+    // public ResponseEntity<MensajeDto<List<CursoDto>>> listarCursos() {
+    //     return ResponseEntity.ok(publicoService.obtenerCursos());
+    // }
 
     @GetMapping("/obtener-dificultades")
     public ResponseEntity<MensajeDto<List<DificultadDto>>> listarDificultades() {
@@ -60,12 +58,12 @@ public class PublicoController {
     }
 
     @GetMapping("/cursos-docente/{id}")
-    public ResponseEntity<MensajeDto<List<DocenteCursoDto>>> cursosPorDocente(@PathVariable("id") Long id) {
+    public ResponseEntity<MensajeDto<List<CursoDto>>> cursosPorDocente(@PathVariable("id") Long id) {
         return ResponseEntity.ok(publicoService.obtenerCursosDocente(id));
     }
 
     @GetMapping("/cursos-estudiante/{id}")
-    public ResponseEntity<MensajeDto<List<EstudianteCursoDto>>> cursosPorEstudiante(@PathVariable("id") Long id) {
+    public ResponseEntity<MensajeDto<List<CursoDto>>> cursosPorEstudiante(@PathVariable("id") Long id) {
         return ResponseEntity.ok(publicoService.obtenerCursosEstudiante(id));
     }
 
