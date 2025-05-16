@@ -8,9 +8,12 @@ import co.edu.uniquindio.proyectobases.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaPublicaDto;
 import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.VisibilidadDto;
 
 @Service
 @AllArgsConstructor
@@ -54,4 +57,18 @@ public class PublicoService {
         return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idUsuario));
     }
     
+    public MensajeDto<List<PreguntaPublicaDto>> obtenerPreguntasPublicas() {
+        return new MensajeDto<>(false, publicoRepository.listarPreguntasPublicas());
+    }
+
+    public MensajeDto<List<VisibilidadDto>> obtenerVisibilidades() {
+        List<VisibilidadDto> visibilidad = publicoRepository.listarVisibilidades();
+        return new MensajeDto<>(false, visibilidad);
+    }
+
+    public MensajeDto<List<ExamenResumenDto>> obtenerExamenes() {
+        List<ExamenResumenDto> examenes = publicoRepository.listarExamenes();
+        return new MensajeDto<>(false, examenes);
+    }
+
 }

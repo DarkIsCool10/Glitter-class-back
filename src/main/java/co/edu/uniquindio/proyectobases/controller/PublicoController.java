@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaPublicaDto;
 import co.edu.uniquindio.proyectobases.dto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
 
 @RestController
@@ -65,6 +68,21 @@ public class PublicoController {
     @GetMapping("/cursos-estudiante/{id}")
     public ResponseEntity<MensajeDto<List<CursoDto>>> cursosPorEstudiante(@PathVariable("id") Long id) {
         return ResponseEntity.ok(publicoService.obtenerCursosEstudiante(id));
+    }
+
+    @GetMapping("/obtener-preguntas-publicas")
+    public ResponseEntity<MensajeDto<List<PreguntaPublicaDto>>> listarPreguntasPublicas() {
+        return ResponseEntity.ok(publicoService.obtenerPreguntasPublicas());
+    }
+
+    @GetMapping("/obtener-visibilidades")
+    public ResponseEntity<MensajeDto<List<VisibilidadDto>>> listarVisibilidades() {
+        return ResponseEntity.ok(publicoService.obtenerVisibilidades());
+    }
+
+    @GetMapping("/obtener-examenes")
+    public ResponseEntity<MensajeDto<List<ExamenResumenDto>>> listarExamenes() {
+        return ResponseEntity.ok(publicoService.obtenerExamenes());
     }
 
 }
