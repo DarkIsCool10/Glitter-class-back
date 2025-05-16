@@ -2,8 +2,9 @@ package co.edu.uniquindio.proyectobases.service;
 
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
-import co.edu.uniquindio.proyectobases.dto.ExamenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenDto;
+
 import java.util.Optional;
 
 @Service

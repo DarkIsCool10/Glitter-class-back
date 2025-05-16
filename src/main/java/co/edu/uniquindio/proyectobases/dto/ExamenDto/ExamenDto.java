@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto;
+package co.edu.uniquindio.proyectobases.dto.ExamenDto;
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 

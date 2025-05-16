@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto;
+package co.edu.uniquindio.proyectobases.dto.AutenticacionDto;
 
 public record LoginResponseDto(
     Long idUsuario, 

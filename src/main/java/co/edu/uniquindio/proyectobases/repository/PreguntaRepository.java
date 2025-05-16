@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import java.sql.Types;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto;
+
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 
 @Repository
 public class PreguntaRepository {
@@ -65,6 +67,32 @@ public class PreguntaRepository {
         }
     
         return Optional.empty();
-    }    
+    } 
+    
+    public int crearOpcion(OpcionRespuestaDto dto) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("crear_opcion_respuesta")
+                .declareParameters(
+                        new SqlParameter("p_idPregunta", Types.NUMERIC),
+                        new SqlParameter("p_textoOpcion", Types.CLOB),
+                        new SqlParameter("p_porcentajeParcial", Types.DOUBLE),
+                        new SqlParameter("p_orden", Types.NUMERIC),
+                        new SqlParameter("p_idTipoRespuesta", Types.NUMERIC),
+                        new SqlOutParameter("p_resultado", Types.NUMERIC)
+                );
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("p_idPregunta", dto.idPregunta())
+                .addValue("p_textoOpcion", dto.textoOpcion())
+                .addValue("p_porcentajeParcial", dto.porcentajeParcial())
+                .addValue("p_orden", dto.orden())
+                .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
+
+        var result = jdbcCall.execute(params);
+
+        return ((Number) result.get("p_resultado")).intValue();
+    }
+
+
 }
 

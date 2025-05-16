@@ -8,8 +8,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import co.edu.uniquindio.proyectobases.dto.UsuarioDetalleDto;
-import co.edu.uniquindio.proyectobases.dto.UsuarioDto;
+import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
+import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDto;
 import io.micrometer.common.lang.NonNull;
 
 import java.sql.ResultSet;
@@ -42,6 +42,7 @@ public class UsuarioRepository {
         return usuarios;
     }
 
+    @SuppressWarnings("null")
     private static class UsuarioRowMapper implements RowMapper<UsuarioDto> {
         @Override
         public UsuarioDto mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {

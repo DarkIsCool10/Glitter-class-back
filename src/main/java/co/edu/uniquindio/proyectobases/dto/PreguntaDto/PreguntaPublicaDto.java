@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto;
+package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
 
 public record PreguntaPublicaDto(
     Long idPregunta,

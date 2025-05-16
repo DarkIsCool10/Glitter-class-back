@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uniquindio.proyectobases.dto.ExamenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenDto;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
 
 @RestController

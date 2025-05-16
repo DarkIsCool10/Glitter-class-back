@@ -1,12 +1,13 @@
 package co.edu.uniquindio.proyectobases.repository;
 
-import co.edu.uniquindio.proyectobases.dto.LoginResponseDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
+
+import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginResponseDto;
 
 import java.sql.Types;
 import java.util.Map;

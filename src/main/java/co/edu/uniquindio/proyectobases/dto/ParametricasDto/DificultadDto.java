@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto;
+package co.edu.uniquindio.proyectobases.dto.ParametricasDto;
 
 public record DificultadDto(
     Long idDificulad,

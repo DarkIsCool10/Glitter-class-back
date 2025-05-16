@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.PublicoRepository;
 import co.edu.uniquindio.proyectobases.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
-import co.edu.uniquindio.proyectobases.dto.CursoDto;
-import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaPublicaDto;
-import co.edu.uniquindio.proyectobases.dto.TemaDto;
-import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
 
 @Service
 @AllArgsConstructor

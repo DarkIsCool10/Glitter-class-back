@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import co.edu.uniquindio.proyectobases.dto.ExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenDto;
 
 @Repository
 public class ExamenRepository {

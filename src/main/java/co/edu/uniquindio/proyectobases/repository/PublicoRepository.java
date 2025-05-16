@@ -7,13 +7,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import co.edu.uniquindio.proyectobases.dto.CursoDto;
-import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.ExamenResumenDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaPublicaDto;
-import co.edu.uniquindio.proyectobases.dto.TemaDto;
-import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
 
 @Repository
 public class PublicoRepository {

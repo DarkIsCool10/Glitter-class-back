@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.service.PreguntaService;
 
 @RestController
@@ -25,5 +26,10 @@ public class PreguntaController {
         return ResponseEntity.status(respuesta.error() ? 400 : 201).body(respuesta);
     }
     
-
+    @PostMapping("/crear-opcion")
+    public ResponseEntity<MensajeDto<Integer>> crearOpcion(@RequestBody OpcionRespuestaDto dto) {
+        MensajeDto<Integer> respuesta = preguntaService.crearOpcion(dto);
+        return ResponseEntity.status(respuesta.error() ? 400 : 201).body(respuesta);
+    }
+    
 }

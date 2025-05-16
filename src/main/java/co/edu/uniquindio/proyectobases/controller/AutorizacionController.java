@@ -3,9 +3,9 @@ package co.edu.uniquindio.proyectobases.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import co.edu.uniquindio.proyectobases.dto.LoginDto;
-import co.edu.uniquindio.proyectobases.dto.LoginResponseDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginDto;
+import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginResponseDto;
 import co.edu.uniquindio.proyectobases.service.LoginService;
 
 import java.util.Optional;

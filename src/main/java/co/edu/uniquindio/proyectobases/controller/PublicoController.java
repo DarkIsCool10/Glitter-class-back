@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import co.edu.uniquindio.proyectobases.dto.CursoDto;
-import co.edu.uniquindio.proyectobases.dto.DificultadDto;
-import co.edu.uniquindio.proyectobases.dto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaPublicaDto;
-import co.edu.uniquindio.proyectobases.dto.TemaDto;
-import co.edu.uniquindio.proyectobases.dto.TipoPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
 
 @RestController
