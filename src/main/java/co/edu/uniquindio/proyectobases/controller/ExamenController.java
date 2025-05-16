@@ -21,9 +21,13 @@ public class ExamenController {
     }
 
     @PostMapping("/crear-examen")
-    public ResponseEntity<MensajeDto<Long>> crear(@RequestBody ExamenDto dto) {
-        MensajeDto<Long> respuesta = examenService.crearExamen(dto);
-        return ResponseEntity.status(respuesta.error() ? 400 : 201).body(respuesta);
+    public ResponseEntity<MensajeDto<String>> crear(@RequestBody ExamenDto dto) {
+        try{
+            examenService.crearExamen(dto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen creado exitosamente"));
+        }catch(Exception e){
+            return ResponseEntity.status(400).body(new MensajeDto<>(true, "Error al crear el examen"));
+        }
     }
 }
 
