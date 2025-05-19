@@ -253,4 +253,33 @@ public class PublicoRepository {
         ));
     }
 
+    @SuppressWarnings("deprecation")
+    public List<UnidadAcademicaDto> listarUnidadesDocente(Long idUsuario) {
+        String sql = """
+                        SELECT 
+                        ua.idUnidad, 
+                        ua.nombre 
+                        FROM Usuario u 
+                        JOIN UnidadAcademica ua ON u.idUnidad = ua.idUnidad 
+                        WHERE u.idUsuario = ?""";
+        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new UnidadAcademicaDto(
+            rs.getLong("idUnidad"),
+            rs.getString("nombre")
+        ));
+    }
+
+    @SuppressWarnings("deprecation")
+    public List<TemaDto> listarTemasUnidad(Long idUnidad){
+        String sql = """
+                        SELECT 
+                        t.idTema, 
+                        t.nombre 
+                        FROM Tema t
+                        JOIN Curso c ON t.idCurso = c.idCurso
+                        WHERE c.idUnidad = ?""";
+        return jdbcTemplate.query(sql, new Object[]{idUnidad}, (rs, rowNum) -> new TemaDto(
+            rs.getLong("idTema"),
+            rs.getString("nombre")
+        ));
+    }
 }

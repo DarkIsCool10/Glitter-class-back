@@ -75,4 +75,14 @@ public class PublicoService {
         return new MensajeDto<>(false, unidades);
     }
 
+    public MensajeDto<List<UnidadAcademicaDto>> obtenerUnidadesDocente(Long idUsuario) {
+        List<UnidadAcademicaDto> unidades = publicoRepository.listarUnidadesDocente(idUsuario);
+        return new MensajeDto<>(false, unidades);
+    }
+
+    public MensajeDto<List<TemaDto>> obtenerTemasUnidad(Long idUnidad) {
+        List<TemaDto> temas = publicoRepository.listarTemasUnidad(idUnidad);
+        return new MensajeDto<>(false, temas);
+    }
+
 }

@@ -91,4 +91,14 @@ public class PublicoController {
         return ResponseEntity.ok(publicoService.obtenerUnidades());
     }
 
+    @GetMapping("/obtener-unidades-docente/{id}")
+    public ResponseEntity<MensajeDto<List<UnidadAcademicaDto>>> listarUnidadesDocente(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(publicoService.obtenerUnidadesDocente(id));
+    }
+
+    @GetMapping("/obtener-temas-unidad/{id}")
+    public ResponseEntity<MensajeDto<List<TemaDto>>> listarTemasUnidad(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(publicoService.obtenerTemasUnidad(id));
+    }
+
 }
