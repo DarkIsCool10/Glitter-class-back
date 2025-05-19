@@ -3,7 +3,7 @@ package co.edu.uniquindio.proyectobases.service;
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public class ExamenService {
         this.examenRepository = examenRepository;
     }
 
-    public MensajeDto<Long> crearExamen(ExamenDto dto) {
+    public MensajeDto<Long> crearExamen(CrearExamenDto dto) {
         try {
             Optional<Long> id = examenRepository.crearExamen(dto);
             return id
@@ -26,4 +26,5 @@ public class ExamenService {
             return new MensajeDto<>(true, null);
         }
     }
+
 }

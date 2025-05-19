@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
 
 @RestController
@@ -21,13 +21,14 @@ public class ExamenController {
     }
 
     @PostMapping("/crear-examen")
-    public ResponseEntity<MensajeDto<String>> crear(@RequestBody ExamenDto dto) {
-        try{
-            examenService.crearExamen(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Examen creado exitosamente"));
-        }catch(Exception e){
-            return ResponseEntity.status(400).body(new MensajeDto<>(true, "Error al crear el examen"));
+    public ResponseEntity<MensajeDto<Long>> crear(@RequestBody CrearExamenDto dto) {
+        try {
+            MensajeDto<Long> respuesta = examenService.crearExamen(dto);
+            return ResponseEntity.ok(respuesta);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(new MensajeDto<>(true, null));
         }
     }
+
 }
 
