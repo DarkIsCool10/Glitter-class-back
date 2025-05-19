@@ -1,9 +1,15 @@
 package co.edu.uniquindio.proyectobases.repository;
 
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +20,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 
 @Repository
 public class PublicoRepository {
@@ -22,6 +29,45 @@ public class PublicoRepository {
 
     public PublicoRepository(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public Optional<UsuarioDetalleDto> obtenerUsuarioPorId(Long idUsuario) {
+    SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+        .withProcedureName("obtener_usuario_detalle")
+        .declareParameters(
+            new SqlParameter("p_idUsuario", Types.NUMERIC),
+            new SqlOutParameter("p_nombre", Types.VARCHAR),
+            new SqlOutParameter("p_apellido", Types.VARCHAR),
+            new SqlOutParameter("p_correo", Types.VARCHAR),
+            new SqlOutParameter("p_unidad", Types.VARCHAR),
+            new SqlOutParameter("p_fechaRegistro", Types.TIMESTAMP),
+            new SqlOutParameter("p_estado", Types.VARCHAR),
+            new SqlOutParameter("p_idRol", Types.NUMERIC),
+            new SqlOutParameter("p_resultado", Types.INTEGER)
+        );
+
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("p_idUsuario", idUsuario);
+
+        Map<String, Object> result = jdbcCall.execute(params);
+
+        Integer resultado = (Integer) result.get("p_resultado");
+        if (resultado != null && resultado == 1) {
+            return Optional.of(
+                new UsuarioDetalleDto(
+                    idUsuario,
+                    (String) result.get("p_nombre"),
+                    (String) result.get("p_apellido"),
+                    (String) result.get("p_correo"),
+                    (String) result.get("p_unidad"),
+                    ((Timestamp) result.get("p_fechaRegistro")).toLocalDateTime(),
+                    (String) result.get("p_estado"),
+                    ((Number) result.get("p_idRol")).longValue()
+                )
+            );
+        }
+
+        return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")

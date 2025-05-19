@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.PublicoRepository;
-import co.edu.uniquindio.proyectobases.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
@@ -19,12 +18,11 @@ import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 @AllArgsConstructor
 public class PublicoService {
 
-    private final UsuarioRepository usuarioRepository;
     private final PublicoRepository publicoRepository;
 
 
     public MensajeDto<?> obtenerUsuario(Long idUsuario) {
-        return usuarioRepository.obtenerUsuarioPorId(idUsuario)
+        return publicoRepository.obtenerUsuarioPorId(idUsuario)
             .<MensajeDto<?>>map(usuario -> new MensajeDto<>(false, usuario))
             .orElseGet(() -> new MensajeDto<>(true, "Usuario no encontrado"));
     }

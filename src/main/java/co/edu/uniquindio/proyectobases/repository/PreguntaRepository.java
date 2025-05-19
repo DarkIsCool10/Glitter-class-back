@@ -85,7 +85,7 @@ public class PreguntaRepository {
                 );
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("p_idPregunta", dto.idPregunta())
+                .addValue("p_idPregunta", dto.idOpcionRespuesta())
                 .addValue("p_textoOpcion", dto.textoOpcion())
                 .addValue("p_porcentajeParcial", dto.porcentajeParcial())
                 .addValue("p_orden", dto.orden())

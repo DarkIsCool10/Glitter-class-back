@@ -31,15 +31,15 @@ public class PublicoController {
     }
 
     @GetMapping("/obtener-usuario/{id}")
-    public ResponseEntity<MensajeDto<String>> obtenerUsuario(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerUsuario(@PathVariable Long id) {
        try{
-        publicoService.obtenerUsuario(id);
-        return ResponseEntity.ok(new MensajeDto<>(false, "Usuario encontrado"));
+        MensajeDto<?> usuario = publicoService.obtenerUsuario(id);
+        return ResponseEntity.ok(usuario);
        }catch(Exception e){
         return ResponseEntity.status(404).body(new MensajeDto<>(true, "Usuario no encontrado"));
        }
     }
-    
+
     @GetMapping("/obtener-temas")
     public ResponseEntity<MensajeDto<List<TemaDto>>> listar(){
         return ResponseEntity.ok(publicoService.obtenerTemas());

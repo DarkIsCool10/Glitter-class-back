@@ -1,7 +1,7 @@
 package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
 
 public record OpcionRespuestaDto(
-    Long idPregunta,
+    Long idOpcionRespuesta,
     String textoOpcion,
     Double porcentajeParcial,
     Integer orden,
