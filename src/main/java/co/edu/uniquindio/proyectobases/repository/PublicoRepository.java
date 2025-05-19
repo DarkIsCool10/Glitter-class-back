@@ -13,6 +13,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
 
 @Repository
@@ -188,6 +189,41 @@ public class PublicoRepository {
             rs.getString("fechaCierre"),
             rs.getString("unidadAcademica")
         ));
+    }
+
+    public List<PreguntaDocenteDto> findPreguntasByDocente(Long idDocente) {
+        String sql = """
+            SELECT 
+                p.idPregunta,
+                p.enunciado,
+                t.nombre AS tema,
+                dp.nombre AS dificultad,
+                tp.nombre AS tipo,
+                v.nombre AS visibilidad,
+                p.porcentajeNota,
+                p.fechaCreacion,
+                eg.nombre AS estado
+            FROM Pregunta p
+            JOIN Tema t ON p.idTema = t.idTema
+            JOIN DificultadPregunta dp ON p.idDificultad = dp.idDificultad
+            JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
+            JOIN VisibilidadPregunta v ON p.idVisibilidad = v.idVisibilidad
+            JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
+            WHERE p.idDocente = ?
+            ORDER BY p.fechaCreacion DESC
+            """;
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PreguntaDocenteDto(
+            rs.getLong("idPregunta"),
+            rs.getString("enunciado"),
+            rs.getString("tema"),
+            rs.getString("dificultad"),
+            rs.getString("tipo"),
+            rs.getString("visibilidad"),
+            rs.getDouble("porcentajeNota"),
+            rs.getTimestamp("fechaCreacion").toLocalDateTime(),
+            rs.getString("estado")
+        ), idDocente);
     }
 
 }

@@ -16,6 +16,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
 
@@ -83,6 +84,11 @@ public class PublicoController {
     @GetMapping("/obtener-examenes")
     public ResponseEntity<MensajeDto<List<ExamenResumenDto>>> listarExamenes() {
         return ResponseEntity.ok(publicoService.obtenerExamenes());
+    }
+
+    @GetMapping("/obtener-preguntas-docente/{id}")
+    public ResponseEntity<MensajeDto<List<PreguntaDocenteDto>>> listarPreguntasDocente(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(publicoService.obtenerPreguntasDocente(id));
     }
 
 }
