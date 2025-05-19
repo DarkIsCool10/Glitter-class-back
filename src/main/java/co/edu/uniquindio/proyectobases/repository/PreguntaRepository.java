@@ -37,7 +37,6 @@ public class PreguntaRepository {
                     new SqlParameter("p_idTema", Types.NUMERIC),
                     new SqlParameter("p_idDificultad", Types.NUMERIC),
                     new SqlParameter("p_idTipo", Types.NUMERIC),
-                    new SqlParameter("p_tiempoMaximo", Types.NUMERIC),
                     new SqlParameter("p_porcentajeNota", Types.DOUBLE),
                     new SqlParameter("p_idVisibilidad", Types.NUMERIC),
                     new SqlParameter("p_idDocente", Types.NUMERIC),
@@ -52,7 +51,6 @@ public class PreguntaRepository {
                 .addValue("p_idTema", dto.idTema())
                 .addValue("p_idDificultad", dto.idDificultad())
                 .addValue("p_idTipo", dto.idTipo())
-                .addValue("p_tiempoMaximo", dto.tiempoMaximo())
                 .addValue("p_porcentajeNota", dto.porcentajeNota())
                 .addValue("p_idVisibilidad", dto.idVisibilidad())
                 .addValue("p_idDocente", dto.idDocente())
