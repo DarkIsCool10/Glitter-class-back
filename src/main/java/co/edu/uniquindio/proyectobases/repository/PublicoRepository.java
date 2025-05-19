@@ -18,6 +18,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
@@ -240,6 +241,15 @@ public class PublicoRepository {
             rs.getString("fechaDisponible"),
             rs.getString("fechaCierre"),
             rs.getString("unidadAcademica")
+        ));
+    }
+
+
+    public List<UnidadAcademicaDto> listarUnidades() {
+        String sql = "SELECT idUnidad, nombre FROM UnidadAcademica";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new UnidadAcademicaDto(
+            rs.getLong("idUnidad"),
+            rs.getString("nombre")
         ));
     }
 

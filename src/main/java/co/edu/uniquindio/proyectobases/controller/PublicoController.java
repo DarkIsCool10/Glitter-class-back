@@ -15,6 +15,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
@@ -83,6 +84,11 @@ public class PublicoController {
     @GetMapping("/obtener-examenes")
     public ResponseEntity<MensajeDto<List<ExamenResumenDto>>> listarExamenes() {
         return ResponseEntity.ok(publicoService.obtenerExamenes());
+    }
+
+    @GetMapping("/obtener-unidades")
+    public ResponseEntity<MensajeDto<List<UnidadAcademicaDto>>> listarUnidades() {
+        return ResponseEntity.ok(publicoService.obtenerUnidades());
     }
 
 }

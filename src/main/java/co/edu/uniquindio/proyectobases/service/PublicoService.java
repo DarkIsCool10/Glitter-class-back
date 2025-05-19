@@ -11,6 +11,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 
@@ -67,6 +68,11 @@ public class PublicoService {
     public MensajeDto<List<ExamenResumenDto>> obtenerExamenes() {
         List<ExamenResumenDto> examenes = publicoRepository.listarExamenes();
         return new MensajeDto<>(false, examenes);
+    }
+
+    public MensajeDto<List<UnidadAcademicaDto>> obtenerUnidades() {
+        List<UnidadAcademicaDto> unidades = publicoRepository.listarUnidades();
+        return new MensajeDto<>(false, unidades);
     }
 
 }
