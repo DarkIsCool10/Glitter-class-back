@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.repository.PreguntaRepository;
 
@@ -40,6 +41,10 @@ public class PreguntaService {
 
     public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {
         return preguntaRepository.obtenerTodasLasPreguntasConOpciones();
+    }
+
+    public MensajeDto<List<PreguntaDocenteDto>> obtenerPreguntasDocente(Long idUsuario) {
+        return new MensajeDto<>(false, preguntaRepository.listarPreguntasDocente(idUsuario));
     }
 }
 
