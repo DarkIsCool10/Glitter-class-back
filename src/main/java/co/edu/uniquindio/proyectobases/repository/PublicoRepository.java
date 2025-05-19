@@ -13,7 +13,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 
 @Repository
 public class PublicoRepository {
@@ -121,7 +121,7 @@ public class PublicoRepository {
         ));
     }
 
-    public List<PreguntaPublicaDto> listarPreguntasPublicas() {
+    public List<ObtenerPreguntaDto> listarPreguntasPublicas() {
         String sql = """
             SELECT 
                 p.idPregunta,
@@ -131,7 +131,10 @@ public class PublicoRepository {
                 d.nombre AS dificultad,
                 u.nombre || ' ' || u.apellido AS docente,
                 ua.nombre AS unidadAcademica,
-                tp.nombre AS tipoPregunta
+                tp.nombre AS tipoPregunta,
+                p.porcentajeNota,
+                p.fechaCreacion,
+                eg.nombre AS estado
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
             JOIN VisibilidadPregunta v ON p.idVisibilidad = v.idVisibilidad
@@ -139,10 +142,11 @@ public class PublicoRepository {
             JOIN Usuario u ON p.idDocente = u.idUsuario
             JOIN UnidadAcademica ua ON p.idUnidad = ua.idUnidad
             JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
+            JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
             WHERE v.nombre = 'publica'
         """;
     
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new PreguntaPublicaDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerPreguntaDto(
             rs.getLong("idPregunta"),
             rs.getString("enunciado"),
             rs.getString("tema"),
@@ -150,7 +154,10 @@ public class PublicoRepository {
             rs.getString("dificultad"),
             rs.getString("docente"),
             rs.getString("unidadAcademica"),
-            rs.getString("tipoPregunta")
+            rs.getString("tipoPregunta"),
+            rs.getDouble("porcentajeNota"),
+            rs.getTimestamp("fechaCreacion").toLocalDateTime(),
+            rs.getString("estado")
         ));
     }
     

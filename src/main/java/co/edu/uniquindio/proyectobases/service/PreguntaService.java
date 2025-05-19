@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.repository.PreguntaRepository;
 
@@ -43,7 +43,7 @@ public class PreguntaService {
         return preguntaRepository.obtenerTodasLasPreguntasConOpciones();
     }
 
-    public MensajeDto<List<PreguntaDocenteDto>> obtenerPreguntasDocente(Long idUsuario) {
+    public MensajeDto<List<ObtenerPreguntaDto>> obtenerPreguntasDocente(Long idUsuario) {
         return new MensajeDto<>(false, preguntaRepository.listarPreguntasDocente(idUsuario));
     }
 }

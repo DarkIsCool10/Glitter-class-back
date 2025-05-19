@@ -13,7 +13,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaPublicaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 
 @Service
 @AllArgsConstructor
@@ -57,7 +57,7 @@ public class PublicoService {
         return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idUsuario));
     }
     
-    public MensajeDto<List<PreguntaPublicaDto>> obtenerPreguntasPublicas() {
+    public MensajeDto<List<ObtenerPreguntaDto>> obtenerPreguntasPublicas() {
         return new MensajeDto<>(false, publicoRepository.listarPreguntasPublicas());
     }
 

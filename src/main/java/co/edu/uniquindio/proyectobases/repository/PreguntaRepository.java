@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import java.sql.Types;
 
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 
 @Repository
@@ -153,35 +153,41 @@ public class PreguntaRepository {
         });
     }
     
-    public List<PreguntaDocenteDto> listarPreguntasDocente(Long idDocente) {
+    public List<ObtenerPreguntaDto> listarPreguntasDocente(Long idDocente) {
         String sql = """
             SELECT 
                 p.idPregunta,
                 p.enunciado,
                 t.nombre AS tema,
-                dp.nombre AS dificultad,
-                tp.nombre AS tipo,
                 v.nombre AS visibilidad,
+                dp.nombre AS dificultad,
+                u.nombre || ' ' || u.apellido AS docente,
+                ua.nombre AS unidadAcademica,
+                tp.nombre AS tipo,
                 p.porcentajeNota,
                 p.fechaCreacion,
                 eg.nombre AS estado
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
             JOIN DificultadPregunta dp ON p.idDificultad = dp.idDificultad
+            JOIN Usuario u ON p.idDocente = u.idUsuario
             JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
+            JOIN UnidadAcademica ua ON p.idUnidad = ua.idUnidad
             JOIN VisibilidadPregunta v ON p.idVisibilidad = v.idVisibilidad
             JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
             WHERE p.idDocente = ?
             ORDER BY p.fechaCreacion DESC
             """;
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new PreguntaDocenteDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerPreguntaDto(
             rs.getLong("idPregunta"),
             rs.getString("enunciado"),
             rs.getString("tema"),
-            rs.getString("dificultad"),
-            rs.getString("tipo"),
             rs.getString("visibilidad"),
+            rs.getString("dificultad"),
+            rs.getString("docente"),
+            rs.getString("unidadAcademica"),
+            rs.getString("tipo"),
             rs.getDouble("porcentajeNota"),
             rs.getTimestamp("fechaCreacion").toLocalDateTime(),
             rs.getString("estado")
@@ -190,4 +196,3 @@ public class PreguntaRepository {
 
 
 }
-

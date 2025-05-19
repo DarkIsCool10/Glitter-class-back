@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.service.PreguntaService;
 
@@ -46,7 +46,7 @@ public class PreguntaController {
         }
     }
 
-    @GetMapping("/obtener-todas-las-preguntas-con-opciones")
+    @GetMapping("/obtener-preguntas-opciones")
     public ResponseEntity<MensajeDto<List<PreguntaConOpcionesDto>>> obtenerTodasLasPreguntasConOpciones() {
         try {
             List<PreguntaConOpcionesDto> preguntas = preguntaService.obtenerTodasLasPreguntasConOpciones();
@@ -57,7 +57,7 @@ public class PreguntaController {
     }
  
     @GetMapping("/obtener-preguntas-docente/{id}")
-    public ResponseEntity<MensajeDto<List<PreguntaDocenteDto>>> listarPreguntasDocente(@PathVariable("id") Long id) {
+    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasDocente(@PathVariable("id") Long id) {
         return ResponseEntity.ok(preguntaService.obtenerPreguntasDocente(id));
     }
 }
