@@ -108,19 +108,26 @@ public class PreguntaRepository {
                         new SqlParameter("p_idPregunta", Types.NUMERIC),
                         new SqlParameter("p_textoOpcion", Types.CLOB),
                         new SqlParameter("p_idTipoRespuesta", Types.NUMERIC),
-                        new SqlOutParameter("p_resultado", Types.NUMERIC),
-                        new SqlOutParameter("p_idOpcion", Types.NUMERIC)
+                        new SqlParameter("p_textoPareja", Types.CLOB),
+                        new SqlOutParameter("p_idOpcion", Types.NUMERIC),
+                        new SqlOutParameter("p_resultado", Types.NUMERIC)
                 );
-    
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("p_idPregunta", idPregunta)
-                .addValue("p_textoOpcion", dto.textoOpcion())
-                .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
-    
-        Map<String, Object> result = jdbcCall.execute(params);
-    
-        Number idOpcionNum = (Number) result.get("p_idOpcion");
-        return idOpcionNum != null ? Optional.of(idOpcionNum.longValue()) : Optional.empty();
+        
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue("p_idPregunta", idPregunta)
+                    .addValue("p_textoOpcion", dto.textoOpcion())
+                    .addValue("p_textoPareja", dto.textoPareja())
+                    .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
+        
+            Map<String, Object> result = jdbcCall.execute(params);
+
+            int resultado = ((Number) result.get("p_resultado")).intValue();
+            
+            if (resultado == 1 && result.get("p_idOpcion") != null) {
+                return Optional.of(((Number) result.get("p_idOpcion")).longValue());
+            }
+            
+            return Optional.empty();
     }
 
     /**
