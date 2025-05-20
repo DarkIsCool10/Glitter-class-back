@@ -20,15 +20,35 @@ import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 
+/**
+ * Repositorio encargado de las operaciones relacionadas con preguntas y sus opciones de respuesta.
+ * Permite crear preguntas, asociar opciones y consultar preguntas con sus opciones y detalles.
+ * Utiliza JdbcTemplate y procedimientos almacenados para interactuar con la base de datos.
+ */
 @Repository
 public class PreguntaRepository {
 
+    /**
+     * JdbcTemplate para ejecutar consultas y procedimientos almacenados en la base de datos.
+     */
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * @param jdbcTemplate plantilla JDBC para operaciones de base de datos
+     */
     public PreguntaRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Crea una nueva pregunta en la base de datos utilizando el procedimiento almacenado 'crear_pregunta'.
+     * Este método toma los datos de la pregunta desde el DTO, construye los parámetros requeridos y ejecuta el procedimiento.
+     * Si la operación es exitosa, retorna el id de la nueva pregunta.
+     *
+     * @param dto DTO con los datos de la pregunta a crear (enunciado, tema, dificultad, tipo, porcentaje, visibilidad, docente, unidad, estado)
+     * @return Optional con el id de la pregunta creada si fue exitosa, vacío en caso contrario
+     */
     public Optional<Long> crearPregunta(PreguntaDto dto) {
         try {
             SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
@@ -73,13 +93,20 @@ public class PreguntaRepository {
         return Optional.empty();
     } 
     
+    /**
+     * Crea una opción de respuesta asociada a una pregunta utilizando el procedimiento almacenado 'crear_opcion_respuesta'.
+     * Envía los datos de la opción y la pregunta correspondiente, y retorna información relevante sobre la opción creada.
+     *
+     * @param idPregunta id de la pregunta a la que se asocia la opción
+     * @param dto DTO con el texto, porcentaje parcial e id del tipo de respuesta de la opción
+     * @return DTO con el resultado de la operación, el orden de la opción y el id generado para la opción
+     */
     public OpcionRespuestaCreadaDto crearOpcionRespuesta(Long idPregunta, OpcionRespuestaDto dto) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("crear_opcion_respuesta")
                 .declareParameters(
                         new SqlParameter("p_idPregunta", Types.NUMERIC),
                         new SqlParameter("p_textoOpcion", Types.CLOB),
-                        new SqlParameter("p_porcentajeParcial", Types.DOUBLE),
                         new SqlParameter("p_idTipoRespuesta", Types.NUMERIC),
                         new SqlOutParameter("p_resultado", Types.NUMERIC),
                         new SqlOutParameter("p_orden", Types.NUMERIC),
@@ -89,7 +116,6 @@ public class PreguntaRepository {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_idPregunta", idPregunta)
                 .addValue("p_textoOpcion", dto.textoOpcion())
-                .addValue("p_porcentajeParcial", dto.porcentajeParcial())
                 .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
 
         Map<String, Object> result = jdbcCall.execute(params);
@@ -99,6 +125,13 @@ public class PreguntaRepository {
         return new OpcionRespuestaCreadaDto(resultado, orden, idOpcion);
     }
 
+    /**
+     * Obtiene todas las preguntas junto con sus opciones de respuesta asociadas.
+     * Realiza una consulta que une las preguntas con sus opciones (si existen),
+     * y agrupa los resultados en objetos que contienen la pregunta y su lista de opciones.
+     *
+     * @return lista de preguntas con sus opciones (puede estar vacía si no existen preguntas)
+     */
     public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {
         String sql = """
             SELECT 
@@ -118,12 +151,13 @@ public class PreguntaRepository {
         """;
     
         return jdbcTemplate.query(sql, rs -> {
+            // Utiliza un LinkedHashMap para mantener el orden de inserción de las preguntas
             Map<Long, PreguntaConOpcionesDto> preguntasMap = new LinkedHashMap<>();
     
             while (rs.next()) {
                 Long idPregunta = rs.getLong("idPregunta");
     
-                // Asegurar que la pregunta esté en el mapa
+                // Si la pregunta aún no está en el mapa, la agrega con una lista vacía de opciones
                 if (!preguntasMap.containsKey(idPregunta)) {
                     PreguntaConOpcionesDto pregunta = new PreguntaConOpcionesDto(
                         idPregunta,
@@ -136,13 +170,12 @@ public class PreguntaRepository {
                     preguntasMap.put(idPregunta, pregunta);
                 }
     
-                // Verificar si hay una opción y agregarla
+                // Si hay una opción de respuesta asociada, la agrega a la lista de la pregunta
                 Long idOpcion = rs.getLong("idOpcion");
                 if (!rs.wasNull()) {
                     OpcionRespuestaDto opcion = new OpcionRespuestaDto(
                         idOpcion,
                         rs.getString("textoOpcion"),
-                        rs.getDouble("porcentajeParcial"),
                         rs.getInt("orden"),
                         rs.getLong("idTipoRespuesta")
                     );
@@ -150,10 +183,19 @@ public class PreguntaRepository {
                 }
             }
     
+            // Devuelve la lista de preguntas con sus opciones
             return new ArrayList<>(preguntasMap.values());
         });
     }
     
+    /**
+     * Obtiene todas las preguntas creadas por un docente específico, incluyendo detalles como tema, visibilidad, dificultad,
+     * nombre del docente, unidad académica, tipo, porcentaje de nota, fecha de creación y estado.
+     * Realiza una consulta con múltiples joins para traer toda la información relevante de cada pregunta.
+     *
+     * @param idDocente id del docente cuyas preguntas se desean listar
+     * @return lista de preguntas detalladas del docente (puede estar vacía si no existen preguntas)
+     */
     public List<ObtenerPreguntaDto> listarPreguntasDocente(Long idDocente) {
         String sql = """
             SELECT 

@@ -25,28 +25,54 @@ import oracle.sql.ArrayDescriptor;
 import oracle.sql.STRUCT;
 import oracle.sql.StructDescriptor;
 
+/**
+ * Repositorio encargado de las operaciones relacionadas con la creación de exámenes.
+ * Utiliza procedimientos almacenados en Oracle y manejo de tipos compuestos para registrar exámenes y sus preguntas.
+ */
 @Repository
 public class ExamenRepository {
 
+    /**
+     * JdbcTemplate para operaciones JDBC sobre la base de datos.
+     */
     private final JdbcTemplate jdbcTemplate;
+
+    /**
+     * DataSource para obtener conexiones directas a la base de datos Oracle.
+     */
     private final DataSource dataSource;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * @param jdbcTemplate plantilla JDBC para operaciones de base de datos
+     * @param dataSource fuente de datos para conexiones Oracle
+     */
     public ExamenRepository(JdbcTemplate jdbcTemplate, DataSource dataSource) {
         this.jdbcTemplate = jdbcTemplate;
         this.dataSource = dataSource;
     }
 
+    /**
+     * Crea un nuevo examen en la base de datos utilizando un procedimiento almacenado Oracle.
+     * Convierte la lista de preguntas a un arreglo Oracle para enviarlo como parámetro compuesto.
+     * @param dto DTO con los datos necesarios para crear el examen
+     * @return Optional con el id del examen creado si fue exitoso, vacío en caso contrario
+     * @throws IllegalArgumentException si no se incluyen preguntas en el examen
+     */
     @SuppressWarnings("deprecation")
-        public Optional<Long> crearExamen(CrearExamenDto dto) {
+    public Optional<Long> crearExamen(CrearExamenDto dto) {
 
+        // Validación: el examen debe tener al menos una pregunta
         if (dto.listaPreguntas() == null || dto.listaPreguntas().isEmpty()) {
             throw new IllegalArgumentException("Debe incluir al menos una pregunta en el examen.");
         }
 
         try (Connection conn = dataSource.getConnection()) {
+            // Obtiene la conexión Oracle y crea el arreglo de preguntas como tipo compuesto
             OracleConnection oracleConn = conn.unwrap(oracle.jdbc.OracleConnection.class);
             ARRAY array = crearArrayPreguntas(dto.listaPreguntas(), oracleConn);
 
+            // Configura el llamado al procedimiento almacenado 'crear_examen' y sus parámetros
             SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("crear_examen")
                 .declareParameters(
@@ -71,6 +97,7 @@ public class ExamenRepository {
                     new SqlOutParameter("p_resultado", Types.NUMERIC)
                 );
 
+            // Prepara los parámetros de entrada para el procedimiento
             MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_idGrupo", dto.idGrupo())
                 .addValue("p_idDocente", dto.idDocente())
@@ -90,33 +117,49 @@ public class ExamenRepository {
                 .addValue("p_idEstado", dto.idEstado())
                 .addValue("p_listaPreguntas", array);
 
+            // Ejecuta el procedimiento y obtiene el resultado
             Map<String, Object> result = jdbcCall.execute(params);
 
+            // Recupera el resultado y el id del examen creado
             Number resultado = (Number) result.get("p_resultado");
             Number idExamen = (Number) result.get("p_idExamen");
 
+            // Retorna el id del examen si la operación fue exitosa
             return resultado != null && resultado.intValue() == 1
                 ? Optional.ofNullable(idExamen).map(Number::longValue)
                 : Optional.empty();
 
         } catch (Exception e) {
+            // Si ocurre un error, retorna vacío
             return Optional.empty();
         }
     }
 
+    /**
+     * Crea un arreglo Oracle (ARRAY) de preguntas para ser enviado como parámetro compuesto al procedimiento almacenado.
+     * Cada pregunta se convierte en un STRUCT del tipo definido en la base de datos.
+     * @param lista lista de preguntas del examen
+     * @param oracleConn conexión Oracle para crear descriptores de tipos
+     * @return arreglo Oracle de preguntas
+     * @throws SQLException si ocurre un error al crear los descriptores o el arreglo
+     */
     @SuppressWarnings("deprecation")
     private ARRAY crearArrayPreguntas(List<PreguntaExamenDto> lista, OracleConnection oracleConn) throws SQLException {
+        // Descriptor para el tipo STRUCT de pregunta
         StructDescriptor structDesc = StructDescriptor.createDescriptor("T_PREGUNTA_EXAMEN", oracleConn);
         STRUCT[] structArray = lista.stream()
             .map(p -> {
                 try {
+                    // Cada pregunta se transforma en un STRUCT con idPregunta y porcentaje
                     return new STRUCT(structDesc, oracleConn, new Object[]{p.idPregunta(), p.porcentaje()});
                 } catch (SQLException e) {
                     throw new RuntimeException("Error creando STRUCT para la pregunta", e);
                 }
             }).toArray(STRUCT[]::new);
 
+        // Descriptor para el tipo ARRAY de preguntas
         ArrayDescriptor arrayDescriptor = ArrayDescriptor.createDescriptor("T_PREGUNTA_EXAMEN_TABLA", oracleConn);
+        // Retorna el arreglo Oracle de STRUCTs
         return new ARRAY(arrayDescriptor, oracleConn, structArray);
     }
 

@@ -23,15 +23,32 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 
+/**
+ * Repositorio para operaciones de consulta pública y paramétrica de la plataforma.
+ * Permite obtener información de usuarios, cursos, exámenes, preguntas, temas, dificultades, tipos, unidades académicas y visibilidades.
+ * Utiliza JdbcTemplate para interactuar con la base de datos mediante consultas y procedimientos almacenados.
+ */
 @Repository
 public class PublicoRepository {
 
+    /**
+     * JdbcTemplate para ejecutar consultas y procedimientos almacenados en la base de datos.
+     */
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Constructor con inyección de dependencias.
+     * @param jdbcTemplate plantilla JDBC para operaciones de base de datos
+     */
     public PublicoRepository(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Obtiene el detalle de un usuario dado su id, llamando a un procedimiento almacenado.
+     * @param idUsuario id del usuario a consultar
+     * @return Optional con el detalle del usuario si existe, vacío en caso contrario
+     */
     public Optional<UsuarioDetalleDto> obtenerUsuarioPorId(Long idUsuario) {
     SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
         .withProcedureName("obtener_usuario_detalle")
@@ -73,6 +90,10 @@ public class PublicoRepository {
         return Optional.empty();
     }
 
+    /**
+     * Lista todos los temas registrados en la base de datos.
+     * @return lista de temas
+     */
     public List<TemaDto> listarTemas(){
         String sql = "SELECT idTema, nombre FROM Tema";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new TemaDto(
@@ -81,6 +102,10 @@ public class PublicoRepository {
         ));
     }
     
+    /**
+     * Lista todas las dificultades de preguntas disponibles.
+     * @return lista de dificultades
+     */
     public List<DificultadDto> listarDificultades() {
         String sql = "SELECT idDificultad, nombre FROM DificultadPregunta";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new DificultadDto(
@@ -89,6 +114,10 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista todos los tipos de preguntas disponibles.
+     * @return lista de tipos de pregunta
+     */
     public List<TipoPreguntaDto> listarTipos() {
         String sql = "SELECT idTipo, nombre FROM TipoPregunta";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new TipoPreguntaDto(
@@ -97,6 +126,11 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista los cursos en los que está inscrito un estudiante, según su id.
+     * @param idUsuario id del estudiante
+     * @return lista de cursos del estudiante
+     */
     @SuppressWarnings("deprecation")
     public List<CursoDto> listarCursosEstudiante(Long idUsuario) {
         String sql = "SELECT * FROM vista_estudiante_curso WHERE idUsuario = ?";
@@ -112,6 +146,11 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista los cursos dictados por un docente, según su id.
+     * @param idUsuario id del docente
+     * @return lista de cursos del docente
+     */
     @SuppressWarnings("deprecation")
     public List<CursoDto> listarCursosDocente(Long idUsuario) {
         String sql = "SELECT * FROM vista_docente_curso WHERE idUsuario = ?";
@@ -127,6 +166,10 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista todas las visibilidades posibles para una pregunta.
+     * @return lista de visibilidades
+     */
     public List<VisibilidadDto> listarVisibilidades() {
         String sql = "SELECT idVisibilidad, nombre FROM VisibilidadPregunta";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new VisibilidadDto(
@@ -135,6 +178,10 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista todas las preguntas públicas registradas en el sistema.
+     * @return lista de preguntas públicas
+     */
     public List<ObtenerPreguntaDto> listarPreguntasPublicas() {
         String sql = """
             SELECT 
@@ -175,6 +222,10 @@ public class PublicoRepository {
         ));
     }
     
+    /**
+     * Lista todos los exámenes registrados en el sistema con información resumida.
+     * @return lista de exámenes
+     */
     public List<ExamenResumenDto> listarExamenes() {
         String sql = """
             SELECT 
@@ -212,6 +263,10 @@ public class PublicoRepository {
     }
 
 
+    /**
+     * Lista todas las unidades académicas existentes.
+     * @return lista de unidades académicas
+     */
     public List<UnidadAcademicaDto> listarUnidades() {
         String sql = "SELECT idUnidad, nombre FROM UnidadAcademica";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new UnidadAcademicaDto(
@@ -220,6 +275,11 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista la unidad académica asociada a un docente según su id.
+     * @param idUsuario id del docente
+     * @return lista de unidades académicas del docente
+     */
     @SuppressWarnings("deprecation")
     public List<UnidadAcademicaDto> listarUnidadesDocente(Long idUsuario) {
         String sql = """
@@ -235,6 +295,11 @@ public class PublicoRepository {
         ));
     }
 
+    /**
+     * Lista los temas asociados a una unidad académica específica.
+     * @param idUnidad id de la unidad académica
+     * @return lista de temas de la unidad
+     */
     @SuppressWarnings("deprecation")
     public List<TemaDto> listarTemasUnidad(Long idUnidad){
         String sql = """

@@ -47,11 +47,6 @@ public class PublicoController {
         return ResponseEntity.ok(publicoService.obtenerTemas());
     } 
 
-    // @GetMapping("/obtener-cursos")
-    // public ResponseEntity<MensajeDto<List<CursoDto>>> listarCursos() {
-    //     return ResponseEntity.ok(publicoService.obtenerCursos());
-    // }
-
     @GetMapping("/obtener-dificultades")
     public ResponseEntity<MensajeDto<List<DificultadDto>>> listarDificultades() {
         return ResponseEntity.ok(publicoService.obtenerDificultades());
