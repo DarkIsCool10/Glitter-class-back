@@ -29,12 +29,12 @@ public class PreguntaController {
     private PreguntaService preguntaService;
     
     @PostMapping("/crear-pregunta")
-    public ResponseEntity<MensajeDto<String>> crearPregunta(@RequestBody PreguntaDto dto) {
+    public ResponseEntity<MensajeDto<Long>> crearPregunta(@RequestBody PreguntaDto dto) {
         try{
-            preguntaService.crearPregunta(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Pregunta creada exitosamente"));
+            MensajeDto<Long> respuesta = preguntaService.crearPregunta(dto);
+            return ResponseEntity.ok(respuesta);
         }catch(Exception e){
-            return ResponseEntity.status(400).body(new MensajeDto<>(true, "Error al crear la pregunta"));
+            return ResponseEntity.status(400).body(new MensajeDto<>(true, null));
         }
     }
     
