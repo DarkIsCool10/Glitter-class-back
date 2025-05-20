@@ -27,14 +27,12 @@ public class PreguntaService {
     @Autowired
     private PreguntaRepository preguntaRepository;
 
-    
-
     /**
-     * Crea una nueva pregunta en la base de datos a partir de los datos proporcionados en el DTO.
-     * Si la creación es exitosa, retorna el id de la pregunta creada, de lo contrario retorna null.
+     * Crea una nueva pregunta en la base de datos con la información proporcionada.
      *
-     * @param dto DTO con los datos de la pregunta a crear
-     * @return Optional<Long> con el id de la pregunta creada o null si hubo error
+     * @param dto DTO que contiene los datos necesarios para crear la pregunta
+     * @return Optional con el identificador de la pregunta creada si la operación fue exitosa
+     * @throws PreguntaException si ocurre un error al crear la pregunta
      */
     public Optional<Long> crearPregunta(PreguntaDto dto) throws PreguntaException {
         Optional<Long> idPregunta = preguntaRepository.crearPregunta(dto);
@@ -47,35 +45,35 @@ public class PreguntaService {
 
     /**
      * Crea una nueva opción de respuesta asociada a una pregunta existente.
-     * Si la creación es exitosa, retorna el DTO con la información de la opción creada.
      *
-     * @param idPregunta id de la pregunta a la que se asocia la opción
-     * @param dto DTO con los datos de la opción de respuesta
-     * @return OpcionRespuestaDto con el DTO de la opción creada o null si hubo error
+     * @param idPregunta identificador de la pregunta a la que se asociará la opción
+     * @param dto DTO con los datos de la opción de respuesta a crear
+     * @return Optional con el identificador de la opción creada si la operación fue exitosa
+     * @throws PreguntaException si ocurre un error al crear la opción de respuesta
      */
     public Optional<Long> crearOpcion(Long idPregunta, OpcionRespuestaDto dto) throws PreguntaException {
         Optional<Long> idOpcion = preguntaRepository.crearOpcionRespuesta(idPregunta, dto);
         if (idOpcion.isPresent()) {
             return idOpcion;
         } else {
-            throw new PreguntaException("Error al crear la opcion de respuesta");
+            throw new PreguntaException("Error al crear la opción de respuesta");
         }
     }
 
     /**
-     * Obtiene todas las preguntas junto con sus opciones de respuesta asociadas.
+     * Obtiene todas las preguntas del sistema junto con sus opciones de respuesta asociadas.
      *
-     * @return lista de preguntas con sus opciones de respuesta
+     * @return lista de DTOs que contienen preguntas con sus opciones de respuesta
      */
     public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {
         return preguntaRepository.obtenerTodasLasPreguntasConOpciones();
     }
 
     /**
-     * Obtiene todas las preguntas creadas por un docente específico, incluyendo detalles relevantes.
+     * Obtiene todas las preguntas creadas por un docente específico.
      *
-     * @param idUsuario id del docente
-     * @return lista de preguntas del docente
+     * @param idUsuario identificador del docente cuyas preguntas se desean consultar
+     * @return lista de DTOs con la información de las preguntas del docente
      */
     public List<ObtenerPreguntaDto> obtenerPreguntasDocente(Long idUsuario) {
         return preguntaRepository.listarPreguntasDocente(idUsuario);

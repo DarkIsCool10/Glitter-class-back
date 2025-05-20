@@ -21,25 +21,43 @@ import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.exception.PreguntaException;
 import co.edu.uniquindio.proyectobases.service.PreguntaService;
 
+/**
+ * Controlador que gestiona las operaciones relacionadas con las preguntas.
+ */
 @RestController
 @RequestMapping("/api/pregunta")
 @CrossOrigin(origins = {"http://localhost:4200", "*"})
-
 public class PreguntaController {
 
+    /**
+     * Servicio que gestiona las operaciones relacionadas con las preguntas.
+     */
     @Autowired
     private PreguntaService preguntaService;
     
-    @PostMapping("/crear-pregunta") 
+    /**
+     * Crea una nueva pregunta.
+     * @param dto DTO con los datos de la pregunta
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al crear la pregunta
+     */
+    @PostMapping("/crear-pregunta")
     public ResponseEntity<MensajeDto<Long>> crearPregunta(@RequestBody PreguntaDto dto) throws PreguntaException {
         try{
-            preguntaService.crearPregunta(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Pregunta creada exitosamente", null));
+            Optional<Long> idPregunta = preguntaService.crearPregunta(dto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Pregunta creada exitosamente", idPregunta.get()));
         }catch(PreguntaException e){
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
     }
     
+    /**
+     * Crea una nueva opción para una pregunta.
+     * @param idPregunta identificador de la pregunta
+     * @param dto DTO con los datos de la opción
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al crear la opción
+     */
     @PostMapping("/crear-opcion/{id}")
     public ResponseEntity<MensajeDto<Long>> crearOpcion(@PathVariable("id") Long idPregunta,@RequestBody OpcionRespuestaDto dto) throws PreguntaException {
         try{
@@ -50,12 +68,22 @@ public class PreguntaController {
         }
     }
 
+    /**
+     * Obtiene todas las preguntas con sus opciones.
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al obtener las preguntas
+     */
     @GetMapping("/obtener-preguntas-opciones")
     public ResponseEntity<MensajeDto<List<PreguntaConOpcionesDto>>> obtenerTodasLasPreguntasConOpciones() throws PreguntaException {
         List<PreguntaConOpcionesDto> preguntas = preguntaService.obtenerTodasLasPreguntasConOpciones();
         return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
     }
- 
+
+    /**
+     * Obtiene todas las preguntas con sus opciones.
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al obtener las preguntas
+     */
     @GetMapping("/obtener-preguntas-docente/{id}")
     public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasDocente(@PathVariable("id") Long id) throws PreguntaException {
         List<ObtenerPreguntaDto> preguntas = preguntaService.obtenerPreguntasDocente(id);

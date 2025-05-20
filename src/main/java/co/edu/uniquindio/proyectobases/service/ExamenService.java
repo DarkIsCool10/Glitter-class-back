@@ -32,19 +32,15 @@ public class ExamenService {
      * Si la creación es exitosa, retorna el id del examen creado; en caso de error, retorna null y marca el mensaje como error.
      *
      * @param dto DTO con los datos necesarios para crear el examen
-     * @return MensajeDto con el id del examen creado o null si hubo error
+     * @return Optional con el identificador del examen creado si la operación fue exitosa
+     * @throws ExamenException si ocurre un error al crear el examen
      */
-    public CrearExamenDto crearExamen(CrearExamenDto dto) throws ExamenException {
-        try{
-            Optional<Long> idExamen = examenRepository.crearExamen(dto);
-            if (idExamen.isPresent()) {
-                throw new ExamenException("Examen creado exitosamente");
-            } else {
-                throw new ExamenException("Error al crear el examen");
-            }
-        }catch(ExamenException e){
-            throw new ExamenException(e.getMessage());
+    public Optional<Long> crearExamen(CrearExamenDto dto) throws ExamenException {
+        Optional<Long> idExamen = examenRepository.crearExamen(dto);
+        if (idExamen.isPresent()) {
+            return idExamen;
+        } else {
+            throw new ExamenException("Error al crear el examen");
         }
     }
-
 }

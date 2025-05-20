@@ -24,9 +24,9 @@ public class AutenticacionService {
     /**
      * Valida las credenciales de un usuario y retorna la información correspondiente si el login es exitoso.
      *
-     * @param correo correo electrónico del usuario
-     * @param contrasena contraseña del usuario
-     * @return Optional con la respuesta de login si las credenciales son correctas, vacío en caso contrario
+     * @param dto DTO con los datos de login(correo y contrasena)
+     * @return LoginResponseDto con la respuesta de login si las credenciales son correctas, vacío en caso contrario
+     * @throws AutorizacionException si las credenciales son inválidas
      */
     public LoginResponseDto login(LoginDto dto) throws AutorizacionException{
         Optional<LoginResponseDto> loginResponseDto = autenticacionRepository.validarLogin(dto.correo(), dto.contrasena());
