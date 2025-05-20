@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginDto;
 import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginResponseDto;
+import co.edu.uniquindio.proyectobases.exception.AutorizacionException;
 import co.edu.uniquindio.proyectobases.service.AutenticacionService;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/autorizacion")
@@ -22,19 +21,12 @@ public class AutorizacionController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MensajeDto<LoginResponseDto>> login(@RequestBody LoginDto logindto) {
+    public ResponseEntity<MensajeDto<LoginResponseDto>> login(@RequestBody LoginDto logindto) throws AutorizacionException {
         try {
-            Optional<LoginResponseDto> loginResponse = autenticacionService.login(logindto.correo(), logindto.contrasena());
-            if (loginResponse.isPresent()) {
-                MensajeDto<LoginResponseDto> respuesta = new MensajeDto<>(false, loginResponse.get());
-                return ResponseEntity.status(200).body(respuesta);
-            } else {
-                MensajeDto<LoginResponseDto> respuesta = new MensajeDto<>(true, null);
-                return ResponseEntity.status(401).body(respuesta);
-            }
-        } catch (Exception e) {
-            MensajeDto<LoginResponseDto> respuesta = new MensajeDto<>(true, null);
-            return ResponseEntity.status(500).body(respuesta);
+            LoginResponseDto loginResponseDto = autenticacionService.login(logindto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Login exitoso", loginResponseDto));
+        } catch (AutorizacionException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
     }
 }

@@ -3,12 +3,11 @@ package co.edu.uniquindio.proyectobases.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
+import co.edu.uniquindio.proyectobases.exception.PreguntaException;
 import co.edu.uniquindio.proyectobases.repository.PreguntaRepository;
 
 import java.util.List;
@@ -35,31 +34,31 @@ public class PreguntaService {
      * Si la creación es exitosa, retorna el id de la pregunta creada, de lo contrario retorna null.
      *
      * @param dto DTO con los datos de la pregunta a crear
-     * @return MensajeDto con el id de la pregunta creada o null si hubo error
+     * @return Optional<Long> con el id de la pregunta creada o null si hubo error
      */
-    public MensajeDto<Long> crearPregunta(PreguntaDto dto) {
+    public Optional<Long> crearPregunta(PreguntaDto dto) throws PreguntaException {
         Optional<Long> idPregunta = preguntaRepository.crearPregunta(dto);
         if (idPregunta.isPresent()) {
-            return new MensajeDto<>(false, idPregunta.get());
+            return idPregunta;
         } else {
-            return new MensajeDto<>(true, null);
+            throw new PreguntaException("Error al crear la pregunta");
         }
     }
 
     /**
      * Crea una nueva opción de respuesta asociada a una pregunta existente.
-     * Si la creación es exitosa (resultado igual a 1), retorna el DTO con la información de la opción creada.
+     * Si la creación es exitosa, retorna el DTO con la información de la opción creada.
      *
      * @param idPregunta id de la pregunta a la que se asocia la opción
      * @param dto DTO con los datos de la opción de respuesta
-     * @return MensajeDto con el DTO de la opción creada o null si hubo error
+     * @return OpcionRespuestaDto con el DTO de la opción creada o null si hubo error
      */
-    public MensajeDto<OpcionRespuestaCreadaDto> crearOpcion(Long idPregunta, OpcionRespuestaDto dto) {
-        OpcionRespuestaCreadaDto respuesta = preguntaRepository.crearOpcionRespuesta(idPregunta, dto);
-        if (respuesta != null && respuesta.resultado() != null && respuesta.resultado() == 1) {
-            return new MensajeDto<>(false, respuesta);
+    public Optional<Long> crearOpcion(Long idPregunta, OpcionRespuestaDto dto) throws PreguntaException {
+        Optional<Long> idOpcion = preguntaRepository.crearOpcionRespuesta(idPregunta, dto);
+        if (idOpcion.isPresent()) {
+            return idOpcion;
         } else {
-            return new MensajeDto<>(true, null);
+            throw new PreguntaException("Error al crear la opcion de respuesta");
         }
     }
 
@@ -76,10 +75,10 @@ public class PreguntaService {
      * Obtiene todas las preguntas creadas por un docente específico, incluyendo detalles relevantes.
      *
      * @param idUsuario id del docente
-     * @return MensajeDto con la lista de preguntas del docente
+     * @return lista de preguntas del docente
      */
-    public MensajeDto<List<ObtenerPreguntaDto>> obtenerPreguntasDocente(Long idUsuario) {
-        return new MensajeDto<>(false, preguntaRepository.listarPreguntasDocente(idUsuario));
+    public List<ObtenerPreguntaDto> obtenerPreguntasDocente(Long idUsuario) {
+        return preguntaRepository.listarPreguntasDocente(idUsuario);
     }
 }
 

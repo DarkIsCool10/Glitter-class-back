@@ -3,9 +3,10 @@ package co.edu.uniquindio.proyectobases.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginDto;
 import co.edu.uniquindio.proyectobases.dto.AutenticacionDto.LoginResponseDto;
+import co.edu.uniquindio.proyectobases.exception.AutorizacionException;
 import co.edu.uniquindio.proyectobases.repository.AutenticacionRepository;
-
 import java.util.Optional;
 
 /**
@@ -27,7 +28,12 @@ public class AutenticacionService {
      * @param contrasena contraseña del usuario
      * @return Optional con la respuesta de login si las credenciales son correctas, vacío en caso contrario
      */
-    public Optional<LoginResponseDto> login(String correo, String contrasena) {
-        return autenticacionRepository.validarLogin(correo, contrasena);
+    public LoginResponseDto login(LoginDto dto) throws AutorizacionException{
+        Optional<LoginResponseDto> loginResponseDto = autenticacionRepository.validarLogin(dto.correo(), dto.contrasena());
+        if (loginResponseDto.isPresent()) {
+            return loginResponseDto.get();
+        } else {
+            throw new AutorizacionException("Credenciales inválidas");
+        }
     }
 }

@@ -14,9 +14,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import java.sql.Types;
 
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 
@@ -99,9 +99,9 @@ public class PreguntaRepository {
      *
      * @param idPregunta id de la pregunta a la que se asocia la opción
      * @param dto DTO con el texto, porcentaje parcial e id del tipo de respuesta de la opción
-     * @return DTO con el resultado de la operación, el orden de la opción y el id generado para la opción
+     * @return id de la opción creada
      */
-    public OpcionRespuestaCreadaDto crearOpcionRespuesta(Long idPregunta, OpcionRespuestaDto dto) {
+    public Optional<Long> crearOpcionRespuesta(Long idPregunta, OpcionRespuestaDto dto) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("crear_opcion_respuesta")
                 .declareParameters(
@@ -109,20 +109,18 @@ public class PreguntaRepository {
                         new SqlParameter("p_textoOpcion", Types.CLOB),
                         new SqlParameter("p_idTipoRespuesta", Types.NUMERIC),
                         new SqlOutParameter("p_resultado", Types.NUMERIC),
-                        new SqlOutParameter("p_orden", Types.NUMERIC),
                         new SqlOutParameter("p_idOpcion", Types.NUMERIC)
                 );
-
+    
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_idPregunta", idPregunta)
                 .addValue("p_textoOpcion", dto.textoOpcion())
                 .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
-
+    
         Map<String, Object> result = jdbcCall.execute(params);
-        int resultado = ((Number) result.get("p_resultado")).intValue();    
-        int orden = ((Number) result.get("p_orden")).intValue();
-        Long idOpcion = ((Number) result.get("p_idOpcion")).longValue();
-        return new OpcionRespuestaCreadaDto(resultado, orden, idOpcion);
+    
+        Number idOpcionNum = (Number) result.get("p_idOpcion");
+        return idOpcionNum != null ? Optional.of(idOpcionNum.longValue()) : Optional.empty();
     }
 
     /**
@@ -143,7 +141,6 @@ public class PreguntaRepository {
                 o.idOpcion,
                 o.textoOpcion,
                 o.porcentajeParcial,
-                o.orden,
                 o.idTipoRespuesta
             FROM Pregunta p
             LEFT JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
@@ -173,10 +170,9 @@ public class PreguntaRepository {
                 // Si hay una opción de respuesta asociada, la agrega a la lista de la pregunta
                 Long idOpcion = rs.getLong("idOpcion");
                 if (!rs.wasNull()) {
-                    OpcionRespuestaDto opcion = new OpcionRespuestaDto(
+                    ObtenerOpcionRespuestaDto opcion = new ObtenerOpcionRespuestaDto(
                         idOpcion,
                         rs.getString("textoOpcion"),
-                        rs.getInt("orden"),
                         rs.getLong("idTipoRespuesta")
                     );
                     preguntasMap.get(idPregunta).opciones().add(opcion);

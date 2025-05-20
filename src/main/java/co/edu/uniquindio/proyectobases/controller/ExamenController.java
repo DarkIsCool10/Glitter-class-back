@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
 
 @RestController
@@ -21,12 +22,12 @@ public class ExamenController {
     }
 
     @PostMapping("/crear-examen")
-    public ResponseEntity<MensajeDto<Long>> crear(@RequestBody CrearExamenDto dto) {
+    public ResponseEntity<MensajeDto<Long>> crear(@RequestBody CrearExamenDto dto) throws ExamenException {
         try {
-            MensajeDto<Long> respuesta = examenService.crearExamen(dto);
-            return ResponseEntity.ok(respuesta);
+            examenService.crearExamen(dto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen creado exitosamente", null));
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(new MensajeDto<>(true, null));
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(),null));
         }
     }
 

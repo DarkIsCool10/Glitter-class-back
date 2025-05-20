@@ -8,5 +8,5 @@ public record PreguntaConOpcionesDto(
     Long idDocente,
     Long idUnidad,
     Long idVisibilidad,
-    List<OpcionRespuestaDto> opciones
+    List<ObtenerOpcionRespuestaDto> opciones
 ) {}

@@ -1,6 +1,7 @@
 package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
 
-public record OpcionRespuestaDto(
+public record ObtenerOpcionRespuestaDto(
+    Long idOpcionRespuesta,
     String textoOpcion,
     Long idTipoRespuesta
 ) {}

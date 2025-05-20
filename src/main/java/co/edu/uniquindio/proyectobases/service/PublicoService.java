@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.PublicoRepository;
 import lombok.AllArgsConstructor;
-import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
@@ -16,10 +15,13 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
+import co.edu.uniquindio.proyectobases.exception.PublicoException;
+
 
 /**
- * Servicio que expone operaciones públicas y paramétricas de la plataforma para su consumo por los controladores.
- * Encapsula la lógica de consulta y delega el acceso a datos al PublicoRepository, retornando los resultados en objetos MensajeDto.
+ * Servicio encargado de gestionar la lógica de negocio relacionada con la información pública y paramétrica de la plataforma.
+ * Interactúa con el repositorio de público para consultar usuarios, temas, dificultades, tipos de pregunta, cursos, visibilidades, exámenes y unidades académicas,
+ * retornando los resultados en objetos de dominio para ser usados por los controladores.
  */
 @Service
 @AllArgsConstructor
@@ -32,113 +34,134 @@ public class PublicoService {
 
 
     /**
-     * Obtiene el detalle de un usuario a partir de su id.
-     * @param idUsuario id del usuario a consultar
-     * @return MensajeDto con el detalle del usuario si existe
+     * Obtiene el detalle de un usuario a partir de su identificador único.
+     *
+     * @param idUsuario identificador del usuario a consultar
+     * @return el detalle del usuario, si existe
+     * @throws PublicoException si el usuario no existe
      */
-    public MensajeDto<UsuarioDetalleDto> obtenerUsuario(Long idUsuario) {
+    public UsuarioDetalleDto obtenerUsuario(Long idUsuario) throws PublicoException {
         Optional<UsuarioDetalleDto> usuario = publicoRepository.obtenerUsuarioPorId(idUsuario);
-        return new MensajeDto<>(false, usuario.get());
+        if (usuario.isPresent()) {
+            return usuario.get();
+        } else {
+            throw new PublicoException("Usuario no encontrado");
+        }
+    }
+
+
+    /**
+     * Obtiene la lista completa de temas registrados en el sistema.
+     *
+     * @return lista de temas disponibles
+     * @throws PublicoException si ocurre un error al consultar los temas
+     */
+    public List<TemaDto> obtenerTemas() throws PublicoException {
+        return publicoRepository.listarTemas();
     }
 
     /**
-     * Obtiene la lista de todos los temas registrados.
-     * @return MensajeDto con la lista de temas
+     * Obtiene la lista de dificultades de preguntas disponibles en el sistema.
+     *
+     * @return lista de dificultades posibles para preguntas
+     * @throws PublicoException si ocurre un error al consultar las dificultades
      */
-    public MensajeDto<List<TemaDto>> obtenerTemas(){
-        List<TemaDto> temas = publicoRepository.listarTemas();
-        return new MensajeDto<>(false, temas);
+    public List<DificultadDto> obtenerDificultades() throws PublicoException {
+        return publicoRepository.listarDificultades();
     }
 
     /**
-     * Obtiene la lista de dificultades de preguntas disponibles.
-     * @return MensajeDto con la lista de dificultades
+     * Obtiene la lista de tipos de preguntas configurados en el sistema.
+     *
+     * @return lista de tipos de pregunta
+     * @throws PublicoException si ocurre un error al consultar los tipos
      */
-    public MensajeDto<List<DificultadDto>> obtenerDificultades() {
-        List<DificultadDto> dificultad = publicoRepository.listarDificultades();
-        return new MensajeDto<>(false, dificultad);
+    public List<TipoPreguntaDto> obtenerTipos() throws PublicoException {
+        return publicoRepository.listarTipos();
     }
 
     /**
-     * Obtiene la lista de tipos de preguntas disponibles.
-     * @return MensajeDto con la lista de tipos de pregunta
+     * Obtiene la lista de cursos dictados por un docente específico.
+     *
+     * @param idUsuario identificador del docente
+     * @return lista de cursos asociados al docente
+     * @throws PublicoException si ocurre un error al consultar los cursos
      */
-    public MensajeDto<List<TipoPreguntaDto>> obtenerTipos() {
-        List<TipoPreguntaDto> tipo = publicoRepository.listarTipos();
-        return new MensajeDto<>(false, tipo);
-    }
-
-    /**
-     * Obtiene la lista de cursos dictados por un docente.
-     * @param idUsuario id del docente
-     * @return MensajeDto con la lista de cursos del docente
-     */
-    public MensajeDto<List<CursoDto>> obtenerCursosDocente(Long idUsuario) {
-        return new MensajeDto<>(false, publicoRepository.listarCursosDocente(idUsuario));
+    public List<CursoDto> obtenerCursosDocente(Long idUsuario) throws PublicoException {
+        return publicoRepository.listarCursosDocente(idUsuario);
     }
 
     /**
      * Obtiene la lista de cursos en los que está inscrito un estudiante.
-     * @param idUsuario id del estudiante
-     * @return MensajeDto con la lista de cursos del estudiante
+     *
+     * @param idUsuario identificador del estudiante
+     * @return lista de cursos en los que participa el estudiante
+     * @throws PublicoException si ocurre un error al consultar los cursos
      */
-    public MensajeDto<List<CursoDto>> obtenerCursosEstudiante(Long idUsuario) {
-        return new MensajeDto<>(false, publicoRepository.listarCursosEstudiante(idUsuario));
+    public List<CursoDto> obtenerCursosEstudiante(Long idUsuario) throws PublicoException {
+        return publicoRepository.listarCursosEstudiante(idUsuario);
     }
     
     /**
-     * Obtiene la lista de todas las preguntas públicas disponibles.
-     * @return MensajeDto con la lista de preguntas públicas
+     * Obtiene la lista de todas las preguntas públicas disponibles en el sistema.
+     *
+     * @return lista de preguntas públicas
+     * @throws PublicoException si ocurre un error al consultar las preguntas
      */
-    public MensajeDto<List<ObtenerPreguntaDto>> obtenerPreguntasPublicas() {
-        return new MensajeDto<>(false, publicoRepository.listarPreguntasPublicas());
+    public List<ObtenerPreguntaDto> obtenerPreguntasPublicas() throws PublicoException {
+        return publicoRepository.listarPreguntasPublicas();
     }
 
     /**
      * Obtiene la lista de visibilidades posibles para las preguntas.
-     * @return MensajeDto con la lista de visibilidades
+     *
+     * @return lista de tipos de visibilidad
+     * @throws PublicoException si ocurre un error al consultar las visibilidades
      */
-    public MensajeDto<List<VisibilidadDto>> obtenerVisibilidades() {
-        List<VisibilidadDto> visibilidad = publicoRepository.listarVisibilidades();
-        return new MensajeDto<>(false, visibilidad);
+    public List<VisibilidadDto> obtenerVisibilidades() throws PublicoException {
+        return publicoRepository.listarVisibilidades();
     }
 
     /**
      * Obtiene la lista de exámenes registrados en el sistema.
-     * @return MensajeDto con la lista de exámenes
+     *
+     * @return lista de exámenes disponibles
+     * @throws PublicoException si ocurre un error al consultar los exámenes
      */
-    public MensajeDto<List<ExamenResumenDto>> obtenerExamenes() {
-        List<ExamenResumenDto> examenes = publicoRepository.listarExamenes();
-        return new MensajeDto<>(false, examenes);
+    public List<ExamenResumenDto> obtenerExamenes() throws PublicoException {
+        return publicoRepository.listarExamenes();
     }
 
     /**
-     * Obtiene la lista de unidades académicas disponibles.
-     * @return MensajeDto con la lista de unidades académicas
+     * Obtiene la lista de unidades académicas disponibles en la plataforma.
+     *
+     * @return lista de unidades académicas
+     * @throws PublicoException si ocurre un error al consultar las unidades académicas
      */
-    public MensajeDto<List<UnidadAcademicaDto>> obtenerUnidades() {
-        List<UnidadAcademicaDto> unidades = publicoRepository.listarUnidades();
-        return new MensajeDto<>(false, unidades);
+    public List<UnidadAcademicaDto> obtenerUnidades() throws PublicoException {
+        return publicoRepository.listarUnidades();
     }
 
     /**
-     * Obtiene la lista de unidades académicas asociadas a un docente.
-     * @param idUsuario id del docente
-     * @return MensajeDto con la lista de unidades académicas del docente
+     * Obtiene la lista de unidades académicas asociadas a un docente específico.
+     *
+     * @param idUsuario identificador del docente
+     * @return lista de unidades académicas del docente
+     * @throws PublicoException si ocurre un error al consultar las unidades académicas
      */
-    public MensajeDto<List<UnidadAcademicaDto>> obtenerUnidadesDocente(Long idUsuario) {
-        List<UnidadAcademicaDto> unidades = publicoRepository.listarUnidadesDocente(idUsuario);
-        return new MensajeDto<>(false, unidades);
+    public List<UnidadAcademicaDto> obtenerUnidadesDocente(Long idUsuario) throws PublicoException {
+        return publicoRepository.listarUnidadesDocente(idUsuario);
     }
 
     /**
      * Obtiene la lista de temas asociados a una unidad académica específica.
-     * @param idUnidad id de la unidad académica
-     * @return MensajeDto con la lista de temas de la unidad
+     *
+     * @param idUnidad identificador de la unidad académica
+     * @return lista de temas de la unidad académica
+     * @throws PublicoException si ocurre un error al consultar los temas
      */
-    public MensajeDto<List<TemaDto>> obtenerTemasUnidad(Long idUnidad) {
-        List<TemaDto> temas = publicoRepository.listarTemasUnidad(idUnidad);
-        return new MensajeDto<>(false, temas);
+    public List<TemaDto> obtenerTemasUnidad(Long idUnidad) throws PublicoException {
+        return publicoRepository.listarTemasUnidad(idUnidad);
     }
 
 }

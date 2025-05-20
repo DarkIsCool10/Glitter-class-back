@@ -2,8 +2,8 @@ package co.edu.uniquindio.proyectobases.service;
 
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
-import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
 import java.util.Optional;
 
@@ -34,14 +34,16 @@ public class ExamenService {
      * @param dto DTO con los datos necesarios para crear el examen
      * @return MensajeDto con el id del examen creado o null si hubo error
      */
-    public MensajeDto<Long> crearExamen(CrearExamenDto dto) {
-        try {
-            Optional<Long> id = examenRepository.crearExamen(dto);
-            return id
-                .map(i -> new MensajeDto<>(false, i))
-                .orElseGet(() -> new MensajeDto<>(true, null));
-        } catch (Exception e) {
-            return new MensajeDto<>(true, null);
+    public CrearExamenDto crearExamen(CrearExamenDto dto) throws ExamenException {
+        try{
+            Optional<Long> idExamen = examenRepository.crearExamen(dto);
+            if (idExamen.isPresent()) {
+                throw new ExamenException("Examen creado exitosamente");
+            } else {
+                throw new ExamenException("Error al crear el examen");
+            }
+        }catch(ExamenException e){
+            throw new ExamenException(e.getMessage());
         }
     }
 
