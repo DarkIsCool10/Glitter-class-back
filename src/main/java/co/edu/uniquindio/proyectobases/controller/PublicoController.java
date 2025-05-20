@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
-import co.edu.uniquindio.proyectobases.dto.CursosDto.InfoCursosDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
@@ -19,6 +18,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
 
 @RestController
@@ -33,13 +33,13 @@ public class PublicoController {
     }
 
     @GetMapping("/obtener-usuario/{id}")
-    public ResponseEntity<?> obtenerUsuario(@PathVariable Long id) {
-       try{
-        MensajeDto<?> usuario = publicoService.obtenerUsuario(id);
-        return ResponseEntity.ok(usuario);
-       }catch(Exception e){
-        return ResponseEntity.status(404).body(new MensajeDto<>(true, "Usuario no encontrado"));
-       }
+    public ResponseEntity<MensajeDto<UsuarioDetalleDto>> obtenerUsuario(@PathVariable Long id) {
+        try{
+            MensajeDto<UsuarioDetalleDto> usuario = publicoService.obtenerUsuario(id);
+            return ResponseEntity.ok(usuario);
+        }catch(Exception e){
+            return ResponseEntity.status(404).body(new MensajeDto<>(true, null));
+        }
     }
 
     @GetMapping("/obtener-temas")
@@ -100,11 +100,6 @@ public class PublicoController {
     @GetMapping("/obtener-temas-unidad/{id}")
     public ResponseEntity<MensajeDto<List<TemaDto>>> listarTemasUnidad(@PathVariable("id") Long id) {
         return ResponseEntity.ok(publicoService.obtenerTemasUnidad(id));
-    }
-
-    @GetMapping("/obtener-info-cursos-docente/{id}")
-    public ResponseEntity<MensajeDto<List<InfoCursosDocenteDto>>> listarInfoCursosDocente(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(publicoService.obtenerInfoCursosDocente(id));
     }
 
 }

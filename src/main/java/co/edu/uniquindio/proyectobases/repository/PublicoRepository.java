@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
-import co.edu.uniquindio.proyectobases.dto.CursosDto.InfoCursosDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
@@ -248,29 +247,6 @@ public class PublicoRepository {
         return jdbcTemplate.query(sql, new Object[]{idUnidad}, (rs, rowNum) -> new TemaDto(
             rs.getLong("idTema"),
             rs.getString("nombre")
-        ));
-    }
-
-
-    @SuppressWarnings("deprecation")
-    public List<InfoCursosDocenteDto> listarInfoCursosDocente(Long idUsuario) {
-        String sql = """
-                        SELECT
-                        u.idUsuario,
-                        c.idCurso, 
-                        c.nombre AS nombreCurso, 
-                        g.idGrupo, 
-                        g.nombre AS nombreGrupo 
-                        FROM Usuario u 
-                        JOIN Grupo g ON u.idUsuario = g.idDocente 
-                        JOIN Curso c ON g.idCurso = c.idCurso 
-                        WHERE u.idUsuario = ?""";
-        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new InfoCursosDocenteDto(
-            rs.getLong("idUsuario"),
-            rs.getLong("idCurso"),
-            rs.getString("nombreCurso"),
-            rs.getLong("idGrupo"),
-            rs.getString("nombreGrupo")
         ));
     }
 
