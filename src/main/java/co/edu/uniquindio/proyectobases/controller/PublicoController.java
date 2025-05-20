@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.InfoCursosDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
@@ -99,6 +100,11 @@ public class PublicoController {
     @GetMapping("/obtener-temas-unidad/{id}")
     public ResponseEntity<MensajeDto<List<TemaDto>>> listarTemasUnidad(@PathVariable("id") Long id) {
         return ResponseEntity.ok(publicoService.obtenerTemasUnidad(id));
+    }
+
+    @GetMapping("/obtener-info-cursos-docente/{id}")
+    public ResponseEntity<MensajeDto<List<InfoCursosDocenteDto>>> listarInfoCursosDocente(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(publicoService.obtenerInfoCursosDocente(id));
     }
 
 }

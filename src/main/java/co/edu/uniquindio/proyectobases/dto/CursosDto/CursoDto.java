@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto.CursoDto;
+package co.edu.uniquindio.proyectobases.dto.CursosDto;
 
 public record CursoDto(
     Long idUsuario,

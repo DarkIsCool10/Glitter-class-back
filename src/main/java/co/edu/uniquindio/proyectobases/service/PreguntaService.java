@@ -8,6 +8,7 @@ import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
 import co.edu.uniquindio.proyectobases.repository.PreguntaRepository;
 
 import java.util.List;
@@ -30,14 +31,14 @@ public class PreguntaService {
         }
     }
 
-    public MensajeDto<Integer> crearOpcion(OpcionRespuestaDto dto) {
-        int resultado = preguntaRepository.crearOpcion(dto);
-        if (resultado == 1) {
-            return new MensajeDto<>(false, resultado);
-        } else {
-            return new MensajeDto<>(true, null);
-        }
+    public MensajeDto<OpcionRespuestaCreadaDto> crearOpcion(Long idPregunta, OpcionRespuestaDto dto) {
+    OpcionRespuestaCreadaDto respuesta = preguntaRepository.crearOpcionRespuesta(idPregunta, dto);
+    if (respuesta != null && respuesta.resultado() == 1) {
+        return new MensajeDto<>(false, respuesta);
+    } else {
+        return new MensajeDto<>(true, null);
     }
+}
 
     public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {
         return preguntaRepository.obtenerTodasLasPreguntasConOpciones();

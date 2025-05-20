@@ -13,7 +13,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.InfoCursosDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
@@ -40,7 +41,8 @@ public class PublicoRepository {
             new SqlOutParameter("p_nombre", Types.VARCHAR),
             new SqlOutParameter("p_apellido", Types.VARCHAR),
             new SqlOutParameter("p_correo", Types.VARCHAR),
-            new SqlOutParameter("p_unidad", Types.VARCHAR),
+            new SqlOutParameter("p_idUnidad", Types.NUMERIC),
+            new SqlOutParameter("p_nombreUnidad", Types.VARCHAR),
             new SqlOutParameter("p_fechaRegistro", Types.TIMESTAMP),
             new SqlOutParameter("p_estado", Types.VARCHAR),
             new SqlOutParameter("p_idRol", Types.NUMERIC),
@@ -60,7 +62,8 @@ public class PublicoRepository {
                     (String) result.get("p_nombre"),
                     (String) result.get("p_apellido"),
                     (String) result.get("p_correo"),
-                    (String) result.get("p_unidad"),
+                    ((Number) result.get("p_idUnidad")).longValue(),
+                    (String) result.get("p_nombreUnidad"),
                     ((Timestamp) result.get("p_fechaRegistro")).toLocalDateTime(),
                     (String) result.get("p_estado"),
                     ((Number) result.get("p_idRol")).longValue()
@@ -71,63 +74,28 @@ public class PublicoRepository {
         return Optional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     public List<TemaDto> listarTemas(){
-        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-            .withProcedureName("listar_temas")
-            .withoutProcedureColumnMetaDataAccess()
-            .returningResultSet("p_temas", (rs, rowNum) -> new TemaDto(
-                rs.getLong("IDTEMA"),
-                rs.getString("NOMBRE")
-            ));
-
-        Map<String, Object> result = jdbcCall.execute();
-        return (List<TemaDto>) result.get("p_temas");
+        String sql = "SELECT idTema, nombre FROM Tema";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new TemaDto(
+            rs.getLong("idTema"),
+            rs.getString("nombre")
+        ));
     }
-
-    // @SuppressWarnings("unchecked")
-    // public List<CursoDto> listarCursos() {
-    //     SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-    //         .withProcedureName("listar_cursos")
-    //         .withoutProcedureColumnMetaDataAccess()
-    //         .returningResultSet("p_cursos", (rs, rowNum) -> new CursoDto(
-    //             rs.getLong("IDCURSO"),
-    //             rs.getString("NOMBRE"),
-    //             rs.getString("DESCRIPCION"),
-    //             rs.getInt("CREDITOS"),
-    //             rs.getString("UNIDADACADEMICA")
-    //         ));
-
-    //     Map<String, Object> result = jdbcCall.execute();
-    //     return (List<CursoDto>) result.get("p_cursos");
-    // }
     
-    @SuppressWarnings("unchecked")
     public List<DificultadDto> listarDificultades() {
-        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-            .withProcedureName("listar_dificultades")
-            .withoutProcedureColumnMetaDataAccess()
-            .returningResultSet("p_dificultades", (rs, rowNum) -> new DificultadDto(
-                rs.getLong("IDDIFICULTAD"),
-                rs.getString("NOMBRE")
-            ));
-
-        Map<String, Object> result = jdbcCall.execute();
-        return (List<DificultadDto>) result.get("p_dificultades");
+        String sql = "SELECT idDificultad, nombre FROM DificultadPregunta";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new DificultadDto(
+            rs.getLong("idDificultad"),
+            rs.getString("nombre")
+        ));
     }
 
-    @SuppressWarnings("unchecked")
     public List<TipoPreguntaDto> listarTipos() {
-        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
-            .withProcedureName("listar_tipos")
-            .withoutProcedureColumnMetaDataAccess()
-            .returningResultSet("p_tipos", (rs, rowNum) -> new TipoPreguntaDto(
-                rs.getLong("IDTIPO"),
-                rs.getString("NOMBRE")
-            ));
-
-        Map<String, Object> result = jdbcCall.execute();
-        return (List<TipoPreguntaDto>) result.get("p_tipos");
+        String sql = "SELECT idTipo, nombre FROM TipoPregunta";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new TipoPreguntaDto(
+            rs.getLong("idTipo"),
+            rs.getString("nombre")
+        ));
     }
 
     @SuppressWarnings("deprecation")
@@ -282,4 +250,28 @@ public class PublicoRepository {
             rs.getString("nombre")
         ));
     }
+
+
+    @SuppressWarnings("deprecation")
+    public List<InfoCursosDocenteDto> listarInfoCursosDocente(Long idUsuario) {
+        String sql = """
+                        SELECT
+                        u.idUsuario,
+                        c.idCurso, 
+                        c.nombre AS nombreCurso, 
+                        g.idGrupo, 
+                        g.nombre AS nombreGrupo 
+                        FROM Usuario u 
+                        JOIN Grupo g ON u.idUsuario = g.idDocente 
+                        JOIN Curso c ON g.idCurso = c.idCurso 
+                        WHERE u.idUsuario = ?""";
+        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new InfoCursosDocenteDto(
+            rs.getLong("idUsuario"),
+            rs.getLong("idCurso"),
+            rs.getString("nombreCurso"),
+            rs.getLong("idGrupo"),
+            rs.getString("nombreGrupo")
+        ));
+    }
+
 }

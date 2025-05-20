@@ -16,6 +16,7 @@ import java.sql.Types;
 
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 
@@ -72,28 +73,30 @@ public class PreguntaRepository {
         return Optional.empty();
     } 
     
-    public int crearOpcion(OpcionRespuestaDto dto) {
+    public OpcionRespuestaCreadaDto crearOpcionRespuesta(Long idPregunta, OpcionRespuestaDto dto) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("crear_opcion_respuesta")
                 .declareParameters(
                         new SqlParameter("p_idPregunta", Types.NUMERIC),
                         new SqlParameter("p_textoOpcion", Types.CLOB),
                         new SqlParameter("p_porcentajeParcial", Types.DOUBLE),
-                        new SqlParameter("p_orden", Types.NUMERIC),
                         new SqlParameter("p_idTipoRespuesta", Types.NUMERIC),
-                        new SqlOutParameter("p_resultado", Types.NUMERIC)
+                        new SqlOutParameter("p_resultado", Types.NUMERIC),
+                        new SqlOutParameter("p_orden", Types.NUMERIC),
+                        new SqlOutParameter("p_idOpcion", Types.NUMERIC)
                 );
 
         MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("p_idPregunta", dto.idOpcionRespuesta())
+                .addValue("p_idPregunta", idPregunta)
                 .addValue("p_textoOpcion", dto.textoOpcion())
                 .addValue("p_porcentajeParcial", dto.porcentajeParcial())
-                .addValue("p_orden", dto.orden())
                 .addValue("p_idTipoRespuesta", dto.idTipoRespuesta());
 
-        var result = jdbcCall.execute(params);
-
-        return ((Number) result.get("p_resultado")).intValue();
+        Map<String, Object> result = jdbcCall.execute(params);
+        int resultado = ((Number) result.get("p_resultado")).intValue();    
+        int orden = ((Number) result.get("p_orden")).intValue();
+        Long idOpcion = ((Number) result.get("p_idOpcion")).longValue();
+        return new OpcionRespuestaCreadaDto(resultado, orden, idOpcion);
     }
 
     public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {

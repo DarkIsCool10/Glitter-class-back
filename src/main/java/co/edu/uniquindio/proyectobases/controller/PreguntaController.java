@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaCreadaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.service.PreguntaService;
@@ -38,13 +39,13 @@ public class PreguntaController {
         }
     }
     
-    @PostMapping("/crear-opcion")
-    public ResponseEntity<MensajeDto<String>> crearOpcion(@RequestBody OpcionRespuestaDto dto) {
+    @PostMapping("/crear-opcion/{id}")
+    public ResponseEntity<MensajeDto<OpcionRespuestaCreadaDto>> crearOpcion(@PathVariable("id") Long idPregunta,@RequestBody OpcionRespuestaDto dto) {
         try{
-            preguntaService.crearOpcion(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Opcion creada exitosamente"));
+            MensajeDto<OpcionRespuestaCreadaDto> respuesta = preguntaService.crearOpcion(idPregunta, dto);
+            return ResponseEntity.ok(respuesta);
         }catch(Exception e){
-            return ResponseEntity.status(400).body(new MensajeDto<>(true, "Error al crear la opcion"));
+            return ResponseEntity.status(400).body(new MensajeDto<>(true, null));
         }
     }
 

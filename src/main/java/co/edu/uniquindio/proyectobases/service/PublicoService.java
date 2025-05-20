@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.PublicoRepository;
 import lombok.AllArgsConstructor;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
-import co.edu.uniquindio.proyectobases.dto.CursoDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.CursoDto;
+import co.edu.uniquindio.proyectobases.dto.CursosDto.InfoCursosDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenResumenDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.DificultadDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
@@ -83,6 +84,11 @@ public class PublicoService {
     public MensajeDto<List<TemaDto>> obtenerTemasUnidad(Long idUnidad) {
         List<TemaDto> temas = publicoRepository.listarTemasUnidad(idUnidad);
         return new MensajeDto<>(false, temas);
+    }
+
+    public MensajeDto<List<InfoCursosDocenteDto>> obtenerInfoCursosDocente(Long idUsuario) {
+        List<InfoCursosDocenteDto> infoCursosDocente = publicoRepository.listarInfoCursosDocente(idUsuario);
+        return new MensajeDto<>(false, infoCursosDocente);
     }
 
 }
