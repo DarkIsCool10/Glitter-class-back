@@ -18,7 +18,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.PreguntaExamenDto;
+import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import oracle.jdbc.OracleConnection;
 import oracle.sql.ARRAY;
 import oracle.sql.ArrayDescriptor;
@@ -57,14 +59,14 @@ public class ExamenRepository {
      * Convierte la lista de preguntas a un arreglo Oracle para enviarlo como parámetro compuesto.
      * @param dto DTO con los datos necesarios para crear el examen
      * @return Optional con el id del examen creado si fue exitoso, vacío en caso contrario
-     * @throws IllegalArgumentException si no se incluyen preguntas en el examen
+     * @throws ExamenException si no se incluyen preguntas en el examen
      */
     @SuppressWarnings("deprecation")
-    public Optional<Long> crearExamen(CrearExamenDto dto) {
+    public Optional<Long> crearExamen(CrearExamenDto dto) throws ExamenException {
 
         // Validación: el examen debe tener al menos una pregunta
         if (dto.listaPreguntas() == null || dto.listaPreguntas().isEmpty()) {
-            throw new IllegalArgumentException("Debe incluir al menos una pregunta en el examen.");
+            throw new ExamenException("Debe incluir al menos una pregunta en el examen.");
         }
 
         try (Connection conn = dataSource.getConnection()) {
@@ -163,6 +165,60 @@ public class ExamenRepository {
         return new ARRAY(arrayDescriptor, oracleConn, structArray);
     }
 
+    /**
+     * Lista todos los exámenes asociados a un docente en la base de datos.
+     * Si la lista es exitosa, retorna la lista de exámenes; en caso de error, retorna null y marca el mensaje como error.
+     *
+     * @param idDocente identificador del docente
+     * @return Optional con la lista de exámenes si la operación fue exitosa
+     * @throws ExamenException si ocurre un error al listar los exámenes
+     */
+    public List<ObtenerExamenDto> listarExamenesDocente(Long idDocente) throws ExamenException {
+        String sql = """
+            SELECT 
+                e.idExamen,
+                e.idTema,
+                t.nombre AS tema,
+                e.titulo,
+                e.descripcion,
+                e.cantidadPreguntas,
+                e.tiempoLimite,
+                e.fechaDisponible,
+                e.fechaCierre,
+                e.pesoEnCurso,
+                e.umbralAprobacion,
+                e.aleatorizarPreguntas,
+                e.mostrarResultados,
+                e.idUnidad,
+                ua.nombre AS unidadAcademica,
+                eg.nombre AS estado
+            FROM Examen e
+            JOIN UnidadAcademica ua ON e.idUnidad = ua.idUnidad
+            JOIN EstadoGeneral eg ON e.idEstado = eg.idEstado
+            JOIN Tema t ON e.idTema = t.idTema
+            WHERE e.idDocente = ?
+            ORDER BY e.fechaDisponible DESC
+            """;
+        
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerExamenDto(
+            rs.getLong("idExamen"),
+            rs.getLong("idTema"),
+            rs.getString("tema"),
+            rs.getString("titulo"),
+            rs.getString("descripcion"),
+            rs.getInt("cantidadPreguntas"),
+            rs.getInt("tiempoLimite"),
+            rs.getTimestamp("fechaDisponible"),
+            rs.getTimestamp("fechaCierre"),
+            rs.getDouble("pesoEnCurso"),
+            rs.getDouble("umbralAprobacion"),
+            rs.getInt("aleatorizarPreguntas"),
+            rs.getInt("mostrarResultados"),
+            rs.getLong("idUnidad"),
+            rs.getString("unidadAcademica"),
+            rs.getString("estado")
+        ), idDocente);
+    }
 
 }
 

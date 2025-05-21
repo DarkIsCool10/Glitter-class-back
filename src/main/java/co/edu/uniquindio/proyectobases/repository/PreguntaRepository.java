@@ -147,11 +147,12 @@ public class PreguntaRepository {
                 p.idVisibilidad,
                 o.idOpcion,
                 o.textoOpcion,
-                o.porcentajeParcial,
-                o.idTipoRespuesta
+                o.idTipoRespuesta,
+                tr.nombre AS nombreTipoRespuesta
             FROM Pregunta p
             LEFT JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
-            ORDER BY p.idPregunta, o.orden
+            LEFT JOIN TipoRespuesta tr ON o.idTipoRespuesta = tr.idTipoRespuesta
+            ORDER BY p.idPregunta
         """;
     
         return jdbcTemplate.query(sql, rs -> {

@@ -3,8 +3,10 @@ package co.edu.uniquindio.proyectobases.service;
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,5 +44,17 @@ public class ExamenService {
         } else {
             throw new ExamenException("Error al crear el examen");
         }
+    }
+
+    /**
+     * Lista todos los exámenes asociados a un docente en la base de datos.
+     * Si la lista es exitosa, retorna la lista de exámenes; en caso de error, retorna null y marca el mensaje como error.
+     *
+     * @param idDocente identificador del docente
+     * @return Optional con la lista de exámenes si la operación fue exitosa
+     * @throws ExamenException si ocurre un error al listar los exámenes
+     */
+    public List<ObtenerExamenDto> listarExamenesDocente(Long idDocente) throws ExamenException {
+        return examenRepository.listarExamenesDocente(idDocente);
     }
 }
