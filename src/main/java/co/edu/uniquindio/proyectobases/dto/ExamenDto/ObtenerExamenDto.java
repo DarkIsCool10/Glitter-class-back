@@ -14,8 +14,6 @@ public record ObtenerExamenDto(
     Timestamp fechaCierre,
     Double pesoEnCurso,
     Double umbralAprobacion,
-    Integer aleatorizarPreguntas,
-    Integer mostrarResultados,
     Long idUnidad,
     String unidadAcademica,
     String estado

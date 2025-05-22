@@ -1,19 +1,20 @@
-package co.edu.uniquindio.proyectobases.dto.ExamenDto;
+package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
 
 import java.sql.Timestamp;
 
-public record CrearExamenDto(
-    Long idGrupo,
-    Long idDocente,
+public record ExamenGrupoDto(
+    Long idExamen,
     Long idTema,
+    String tema,
     String titulo,
     String descripcion,
-    Integer preguntasMostradas,
+    Integer cantidadPreguntas,
     Integer tiempoLimite,
     Timestamp fechaDisponible,
     Timestamp fechaCierre,
     Double pesoEnCurso,
     Double umbralAprobacion,
     Long idUnidad,
-    Long idEstado
+    String unidadAcademica,
+    String estado
 ) {}
