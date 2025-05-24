@@ -24,7 +24,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposDocenteDto;
+import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposIdDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 
 /**
@@ -344,7 +344,7 @@ public class PublicoRepository {
      * @param idUsuario id del docente
      * @return lista de grupos del docente
      */
-    public List<ObtenerGruposDocenteDto> listarGruposDocente(Long idUsuario) {
+    public List<ObtenerGruposIdDto> listarGruposDocente(Long idUsuario) {
         String sql = """
                         SELECT 
                         g.idGrupo, 
@@ -356,7 +356,7 @@ public class PublicoRepository {
                         JOIN Usuario u ON g.idDocente = u.idUsuario  
                         WHERE u.idUsuario = ?
                         """;
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerGruposDocenteDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerGruposIdDto(
             rs.getLong("idGrupo"),
             rs.getString("nombre"),
             rs.getLong("idCurso"),
@@ -364,5 +364,32 @@ public class PublicoRepository {
         ), idUsuario);
     }
 
-    
+    /**
+     * Lista los grupos en los que está inscrito un estudiante.
+     *
+     * @param idUsuario identificador del estudiante
+     * @return lista de grupos en los que participa el estudiante
+     */
+    public List<ObtenerGruposIdDto> listarGruposEstudiante(Long idUsuario) {
+        String sql = """
+                        SELECT 
+                        g.idGrupo, 
+                        g.nombre,
+                        g.idCurso,
+                        c.nombre AS nombreCurso
+                        FROM Grupo g
+                        JOIN Curso c ON c.idCurso = g.idCurso
+                        JOIN GrupoUsuario gu ON g.idGrupo = gu.idGrupo
+                        JOIN Usuario u ON gu.idUsuario = u.idUsuario  
+                        WHERE u.idUsuario = ?
+                        """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerGruposIdDto(
+            rs.getLong("idGrupo"),
+            rs.getString("nombre"),
+            rs.getLong("idCurso"),
+            rs.getString("nombreCurso")
+        ), idUsuario);
+    }
+
+
 }

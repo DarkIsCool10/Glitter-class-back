@@ -14,7 +14,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposDocenteDto;
+import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposIdDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 import co.edu.uniquindio.proyectobases.exception.PublicoException;
 
@@ -172,8 +172,18 @@ public class PublicoService {
      * @return lista de grupos del docente
      * @throws PublicoException si ocurre un error al consultar los grupos
      */
-    public List<ObtenerGruposDocenteDto> obtenerGruposDocente(Long idUsuario) throws PublicoException {
+    public List<ObtenerGruposIdDto> obtenerGruposDocente(Long idUsuario) throws PublicoException {
         return publicoRepository.listarGruposDocente(idUsuario);
     }
 
+    /**
+     * Obtiene la lista de grupos en los que está inscrito un estudiante.
+     *
+     * @param idUsuario identificador del estudiante
+     * @return lista de grupos en los que participa el estudiante
+     * @throws PublicoException si ocurre un error al consultar los grupos
+     */
+    public List<ObtenerGruposIdDto> obtenerGruposEstudiante(Long idUsuario) throws PublicoException {
+        return publicoRepository.listarGruposEstudiante(idUsuario);
+    }
 }

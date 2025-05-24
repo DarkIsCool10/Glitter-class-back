@@ -18,7 +18,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
-import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposDocenteDto;
+import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposIdDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 import co.edu.uniquindio.proyectobases.exception.PublicoException;
 import co.edu.uniquindio.proyectobases.service.PublicoService;
@@ -177,8 +177,19 @@ public class PublicoController {
      * @throws PublicoException si ocurre un error al obtener los grupos
      */
     @GetMapping("/obtener-grupos-docente/{idDocente}")
-    public ResponseEntity<MensajeDto<List<ObtenerGruposDocenteDto>>> listarGruposDocente(@PathVariable("idDocente") Long idDocente) throws PublicoException {
+    public ResponseEntity<MensajeDto<List<ObtenerGruposIdDto>>> listarGruposDocente(@PathVariable("idDocente") Long idDocente) throws PublicoException {
         return ResponseEntity.ok(new MensajeDto<>(false, "Grupos obtenidos exitosamente", publicoService.obtenerGruposDocente(idDocente)));
+    }
+
+    /**
+     * Obtiene todos los grupos de un estudiante.
+     * @param idEstudiante identificador del estudiante
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PublicoException si ocurre un error al obtener los grupos
+     */
+    @GetMapping("/obtener-grupos-estudiante/{idEstudiante}")
+    public ResponseEntity<MensajeDto<List<ObtenerGruposIdDto>>> listarGruposEstudiante(@PathVariable("idEstudiante") Long idEstudiante) throws PublicoException {
+        return ResponseEntity.ok(new MensajeDto<>(false, "Grupos obtenidos exitosamente", publicoService.obtenerGruposEstudiante(idEstudiante)));
     }
 
 }

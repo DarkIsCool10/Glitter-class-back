@@ -1,6 +1,6 @@
 package co.edu.uniquindio.proyectobases.dto.PublicoDto;
 
-public record ObtenerGruposDocenteDto(
+public record ObtenerGruposIdDto(
     Long idGrupo,
     String nombre,
     Long idCurso,
