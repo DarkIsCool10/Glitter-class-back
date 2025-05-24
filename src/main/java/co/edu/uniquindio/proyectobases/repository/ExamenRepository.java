@@ -168,6 +168,7 @@ public class ExamenRepository {
             e.titulo,
             e.descripcion,
             e.cantidadPreguntas,
+            e.preguntasMostradas,
             e.tiempoLimite,
             e.fechaDisponible,
             e.fechaCierre,
@@ -191,6 +192,7 @@ public class ExamenRepository {
             rs.getString("titulo"),
             rs.getString("descripcion"),
             rs.getInt("cantidadPreguntas"),
+            rs.getInt("preguntasMostradas"),
             rs.getInt("tiempoLimite"),
             rs.getTimestamp("fechaDisponible"),
             rs.getTimestamp("fechaCierre"),
@@ -202,6 +204,9 @@ public class ExamenRepository {
         ), idGrupo);
 
     }
+
+
+
 
 }
 

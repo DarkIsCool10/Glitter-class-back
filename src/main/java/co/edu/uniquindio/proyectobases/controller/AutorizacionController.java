@@ -42,7 +42,7 @@ public class AutorizacionController {
             LoginResponseDto loginResponseDto = autenticacionService.login(logindto);
             return ResponseEntity.ok(new MensajeDto<>(false, "Login exitoso", loginResponseDto));
         } catch (AutorizacionException e) {
-            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, "Credenciales inválidas", null));
         }
     }
 }
