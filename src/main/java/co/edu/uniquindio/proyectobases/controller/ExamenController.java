@@ -93,5 +93,22 @@ public class ExamenController {
         }
     }
 
+    /**
+     * Agrega una pregunta a un examen.
+     * @param idExamen identificador del examen
+     * @param idPregunta identificador de la pregunta
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al agregar la pregunta al examen
+     */
+    @PostMapping("/agregar-pregunta-examen/{idExamen}/{idPregunta}")
+    public ResponseEntity<MensajeDto<Long>> agregarPreguntaExamen(@PathVariable Long idExamen, @PathVariable Long idPregunta) throws ExamenException {
+        try {
+            examenService.agregarPreguntaAExamen(idExamen, idPregunta);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Pregunta agregada exitosamente", null));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
 }
 

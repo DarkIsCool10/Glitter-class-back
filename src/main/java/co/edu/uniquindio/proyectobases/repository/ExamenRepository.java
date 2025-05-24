@@ -209,7 +209,32 @@ public class ExamenRepository {
 
     }
 
+    /**
+     * Agrega una pregunta a un examen en la base de datos.
+     * Utiliza el procedimiento almacenado 'agregar_pregunta_a_examen' para agregar la pregunta al examen.
+     * Si la operación es exitosa, retorna el id de la pregunta agregada; en caso contrario, retorna Optional.empty().
+     *
+     * @param idExamen identificador del examen al que se agregará la pregunta
+     * @param idPregunta identificador de la pregunta que se agregará al examen
+     * @return Optional con el id de la pregunta agregada si la operación fue exitosa
+     * @throws ExamenException si ocurre un error al agregar la pregunta al examen
+     */
+    public int agregarPreguntaExamen(Long idExamen, Long idPregunta) throws ExamenException {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+            .withProcedureName("agregar_pregunta_a_examen")
+            .declareParameters(
+                new SqlParameter("p_idExamen", Types.NUMERIC),
+                new SqlParameter("p_idPregunta", Types.NUMERIC),
+                new SqlOutParameter("p_resultado", Types.INTEGER)
+            );
     
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("p_idExamen", idExamen)
+            .addValue("p_idPregunta", idPregunta);
+    
+        Map<String, Object> result = jdbcCall.execute(params);
+        return ((Number) result.get("p_resultado")).intValue();
+    }
 
 
 }
