@@ -9,6 +9,7 @@ public record ObtenerExamenDto(
     String titulo,
     String descripcion,
     Integer cantidadPreguntas,
+    Integer preguntasMostradas,
     Integer tiempoLimite,
     Timestamp fechaDisponible,
     Timestamp fechaCierre,

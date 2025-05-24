@@ -8,7 +8,8 @@ public record CrearExamenDto(
     Long idTema,
     String titulo,
     String descripcion,
-    Integer preguntasMostradas,
+    // Integer cantidadPreguntas, -- Se setean nulos al momento de crear el examen
+    // Integer preguntasMostradas,
     Integer tiempoLimite,
     Timestamp fechaDisponible,
     Timestamp fechaCierre,

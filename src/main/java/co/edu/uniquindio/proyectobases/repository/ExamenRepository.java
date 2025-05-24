@@ -77,7 +77,7 @@ public class ExamenRepository {
                 .addValue("p_titulo", dto.titulo())
                 .addValue("p_descripcion", dto.descripcion())
                 .addValue("p_cantidadPreguntas", null)
-                .addValue("p_preguntasMostradas", dto.preguntasMostradas())
+                .addValue("p_preguntasMostradas", null)
                 .addValue("p_tiempoLimite", dto.tiempoLimite())
                 .addValue("p_fechaDisponible", dto.fechaDisponible())
                 .addValue("p_fechaCierre", dto.fechaCierre())
@@ -117,6 +117,7 @@ public class ExamenRepository {
                 e.titulo,
                 e.descripcion,
                 e.cantidadPreguntas,
+                e.preguntasMostradas,
                 e.tiempoLimite,
                 e.fechaDisponible,
                 e.fechaCierre,
@@ -140,6 +141,7 @@ public class ExamenRepository {
             rs.getString("titulo"),
             rs.getString("descripcion"),
             rs.getInt("cantidadPreguntas"),
+            rs.getInt("preguntasMostradas"),
             rs.getInt("tiempoLimite"),
             rs.getTimestamp("fechaDisponible"),
             rs.getTimestamp("fechaCierre"),
@@ -205,7 +207,7 @@ public class ExamenRepository {
 
     }
 
-
+    
 
 
 }
