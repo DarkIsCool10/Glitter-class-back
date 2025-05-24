@@ -14,6 +14,7 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 import co.edu.uniquindio.proyectobases.exception.PublicoException;
 
@@ -162,6 +163,17 @@ public class PublicoService {
      */
     public List<TemaDto> obtenerTemasUnidad(Long idUnidad) throws PublicoException {
         return publicoRepository.listarTemasUnidad(idUnidad);
+    }
+
+    /**
+     * Obtiene la lista de grupos asociados a un docente específico.
+     *
+     * @param idUsuario identificador del docente
+     * @return lista de grupos del docente
+     * @throws PublicoException si ocurre un error al consultar los grupos
+     */
+    public List<ObtenerGruposDocenteDto> obtenerGruposDocente(Long idUsuario) throws PublicoException {
+        return publicoRepository.listarGruposDocente(idUsuario);
     }
 
 }

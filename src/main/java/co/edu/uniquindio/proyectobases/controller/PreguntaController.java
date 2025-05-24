@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.exception.PreguntaException;
 import co.edu.uniquindio.proyectobases.service.PreguntaService;
@@ -74,8 +73,8 @@ public class PreguntaController {
      * @throws PreguntaException si ocurre un error al obtener las preguntas
      */
     @GetMapping("/obtener-preguntas-opciones")
-    public ResponseEntity<MensajeDto<List<PreguntaConOpcionesDto>>> obtenerTodasLasPreguntasConOpciones() throws PreguntaException {
-        List<PreguntaConOpcionesDto> preguntas = preguntaService.obtenerTodasLasPreguntasConOpciones();
+    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> obtenerTodasLasPreguntasConOpciones() throws PreguntaException {
+        List<ObtenerPreguntaDto> preguntas = preguntaService.obtenerTodasLasPreguntasConOpciones();
         return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
     }
 
@@ -89,4 +88,18 @@ public class PreguntaController {
         List<ObtenerPreguntaDto> preguntas = preguntaService.obtenerPreguntasDocente(id);
         return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
     }
+
+    /**
+     * Obtiene una lista de preguntas filtradas por el tema especificado.
+     *
+     * @param idTema identificador del tema por el cual se filtran las preguntas
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al obtener las preguntas
+     */
+    @GetMapping("/obtener-preguntas-tema/{idTema}")
+    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasTema(@PathVariable("idTema") Long idTema) throws PreguntaException {
+        List<ObtenerPreguntaDto> preguntas = preguntaService.obtenerPreguntasTema(idTema);
+        return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
+    }
+
 }

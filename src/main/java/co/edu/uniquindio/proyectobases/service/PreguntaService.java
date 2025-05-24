@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.OpcionRespuestaDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaConOpcionesDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaDto;
 import co.edu.uniquindio.proyectobases.exception.PreguntaException;
 import co.edu.uniquindio.proyectobases.repository.PreguntaRepository;
@@ -65,7 +64,7 @@ public class PreguntaService {
      *
      * @return lista de DTOs que contienen preguntas con sus opciones de respuesta
      */
-    public List<PreguntaConOpcionesDto> obtenerTodasLasPreguntasConOpciones() {
+    public List<ObtenerPreguntaDto> obtenerTodasLasPreguntasConOpciones() {
         return preguntaRepository.obtenerTodasLasPreguntasConOpciones();
     }
 
@@ -77,6 +76,17 @@ public class PreguntaService {
      */
     public List<ObtenerPreguntaDto> obtenerPreguntasDocente(Long idUsuario) {
         return preguntaRepository.listarPreguntasDocente(idUsuario);
+    }
+
+    /**
+     * Obtiene una lista de preguntas filtradas por el tema especificado.
+     *
+     * @param idTema identificador del tema por el cual se filtran las preguntas
+     * @return lista de preguntas que pertenecen al tema especificado
+     * @throws PreguntaException si ocurre un error al consultar las preguntas
+     */
+    public List<ObtenerPreguntaDto> obtenerPreguntasTema(Long idTema) throws PreguntaException {
+        return preguntaRepository.listarPreguntasTema(idTema);
     }
 }
 

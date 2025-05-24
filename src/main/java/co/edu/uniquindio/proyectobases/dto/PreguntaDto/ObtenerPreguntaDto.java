@@ -1,6 +1,7 @@
 package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.util.List;
 
 public record ObtenerPreguntaDto(
     Long idPregunta,
@@ -12,7 +13,8 @@ public record ObtenerPreguntaDto(
     String unidadAcademica,
     String tipo,
     Double porcentajeNota,
-    LocalDateTime fechaCreacion,
-    String estado
+    Timestamp fechaCreacion,
+    String estado,
+    List<ObtenerOpcionRespuestaDto> opciones
 ) {}
 

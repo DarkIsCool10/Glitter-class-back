@@ -2,6 +2,8 @@ package co.edu.uniquindio.proyectobases.repository;
 
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,7 +22,9 @@ import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TemaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.TipoPreguntaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.UnidadAcademicaDto;
 import co.edu.uniquindio.proyectobases.dto.ParametricasDto.VisibilidadDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerPreguntaDto;
+import co.edu.uniquindio.proyectobases.dto.PublicoDto.ObtenerGruposDocenteDto;
 import co.edu.uniquindio.proyectobases.dto.UsuarioDto.UsuarioDetalleDto;
 
 /**
@@ -131,10 +135,9 @@ public class PublicoRepository {
      * @param idUsuario id del estudiante
      * @return lista de cursos del estudiante
      */
-    @SuppressWarnings("deprecation")
     public List<CursoDto> listarCursosEstudiante(Long idUsuario) {
         String sql = "SELECT * FROM vista_estudiante_curso WHERE idUsuario = ?";
-        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new CursoDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new CursoDto(
             rs.getLong("idUsuario"),
             rs.getLong("idCurso"),
             rs.getString("nombreCurso"),
@@ -143,7 +146,7 @@ public class PublicoRepository {
             rs.getLong("idGrupo"),
             rs.getString("nombreGrupo"),
             rs.getString("nombreDocente")
-        ));
+        ), idUsuario);
     }
 
     /**
@@ -151,10 +154,9 @@ public class PublicoRepository {
      * @param idUsuario id del docente
      * @return lista de cursos del docente
      */
-    @SuppressWarnings("deprecation")
     public List<CursoDto> listarCursosDocente(Long idUsuario) {
         String sql = "SELECT * FROM vista_docente_curso WHERE idUsuario = ?";
-        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new CursoDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new CursoDto(
             rs.getLong("idUsuario"),
             rs.getLong("idCurso"),
             rs.getString("nombreCurso"),
@@ -163,7 +165,7 @@ public class PublicoRepository {
             rs.getLong("idGrupo"),
             rs.getString("nombreGrupo"),
             rs.getString("nombreDocente")
-        ));
+        ), idUsuario);
     }
 
     /**
@@ -195,7 +197,10 @@ public class PublicoRepository {
                 tp.nombre AS tipoPregunta,
                 p.porcentajeNota,
                 p.fechaCreacion,
-                eg.nombre AS estado
+                eg.nombre AS estado,
+                o.idOpcion,
+                o.textoOpcion,
+                o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
             JOIN VisibilidadPregunta v ON p.idVisibilidad = v.idVisibilidad
@@ -204,22 +209,43 @@ public class PublicoRepository {
             JOIN UnidadAcademica ua ON p.idUnidad = ua.idUnidad
             JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
             JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
+            JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
             WHERE v.nombre = 'publica'
         """;
     
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerPreguntaDto(
-            rs.getLong("idPregunta"),
-            rs.getString("enunciado"),
-            rs.getString("tema"),
-            rs.getString("visibilidad"),
-            rs.getString("dificultad"),
-            rs.getString("docente"),
-            rs.getString("unidadAcademica"),
-            rs.getString("tipoPregunta"),
-            rs.getDouble("porcentajeNota"),
-            rs.getTimestamp("fechaCreacion").toLocalDateTime(),
-            rs.getString("estado")
-        ));
+        Map<Long, ObtenerPreguntaDto> preguntasMap = new LinkedHashMap<>();
+        jdbcTemplate.query(sql, rs -> {
+            Long idPregunta = rs.getLong("idPregunta");
+            ObtenerPreguntaDto pregunta = preguntasMap.get(idPregunta);
+    
+            if (pregunta == null) {
+                pregunta = new ObtenerPreguntaDto(
+                    idPregunta,
+                    rs.getString("enunciado"),
+                    rs.getString("tema"),
+                    rs.getString("visibilidad"),
+                    rs.getString("dificultad"),
+                    rs.getString("docente"),
+                    rs.getString("unidadAcademica"),
+                    rs.getString("tipoPregunta"),
+                    rs.getDouble("porcentajeNota"),
+                    rs.getTimestamp("fechaCreacion"),
+                    rs.getString("estado"),
+                    new ArrayList<>()
+                );
+                preguntasMap.put(idPregunta, pregunta);
+            }
+    
+            // Agregar la opción a la lista de opciones de la pregunta
+            List<ObtenerOpcionRespuestaDto> opciones = pregunta.opciones();
+            opciones.add(new ObtenerOpcionRespuestaDto(
+                rs.getLong("idOpcion"),
+                rs.getString("textoOpcion"),
+                rs.getLong("idTipoRespuesta")
+            ));
+        });
+    
+        return new ArrayList<>(preguntasMap.values());
     }
     
     /**
@@ -280,7 +306,6 @@ public class PublicoRepository {
      * @param idUsuario id del docente
      * @return lista de unidades académicas del docente
      */
-    @SuppressWarnings("deprecation")
     public List<UnidadAcademicaDto> listarUnidadesDocente(Long idUsuario) {
         String sql = """
                         SELECT 
@@ -289,10 +314,10 @@ public class PublicoRepository {
                         FROM Usuario u 
                         JOIN UnidadAcademica ua ON u.idUnidad = ua.idUnidad 
                         WHERE u.idUsuario = ?""";
-        return jdbcTemplate.query(sql, new Object[]{idUsuario}, (rs, rowNum) -> new UnidadAcademicaDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new UnidadAcademicaDto(
             rs.getLong("idUnidad"),
             rs.getString("nombre")
-        ));
+        ),idUsuario);
     }
 
     /**
@@ -300,7 +325,6 @@ public class PublicoRepository {
      * @param idUnidad id de la unidad académica
      * @return lista de temas de la unidad
      */
-    @SuppressWarnings("deprecation")
     public List<TemaDto> listarTemasUnidad(Long idUnidad){
         String sql = """
                         SELECT 
@@ -309,10 +333,36 @@ public class PublicoRepository {
                         FROM Tema t
                         JOIN Curso c ON t.idCurso = c.idCurso
                         WHERE c.idUnidad = ?""";
-        return jdbcTemplate.query(sql, new Object[]{idUnidad}, (rs, rowNum) -> new TemaDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new TemaDto(
             rs.getLong("idTema"),
             rs.getString("nombre")
-        ));
+        ),idUnidad);
     }
 
+    /**
+     * Lista los grupos asociados a un docente según su id.
+     * @param idUsuario id del docente
+     * @return lista de grupos del docente
+     */
+    public List<ObtenerGruposDocenteDto> listarGruposDocente(Long idUsuario) {
+        String sql = """
+                        SELECT 
+                        g.idGrupo, 
+                        g.nombre,
+                        g.idCurso,
+                        c.nombre AS nombreCurso
+                        FROM Grupo g
+                        JOIN Curso c ON g.idCurso = c.idCurso
+                        JOIN Usuario u ON g.idDocente = u.idUsuario  
+                        WHERE u.idUsuario = ?
+                        """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new ObtenerGruposDocenteDto(
+            rs.getLong("idGrupo"),
+            rs.getString("nombre"),
+            rs.getLong("idCurso"),
+            rs.getString("nombreCurso")
+        ), idUsuario);
+    }
+
+    
 }
