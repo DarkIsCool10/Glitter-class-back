@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
@@ -38,13 +39,8 @@ public class ExamenService {
      * @return Optional con el identificador del examen creado si la operación fue exitosa
      * @throws ExamenException si ocurre un error al crear el examen
      */
-    public Optional<Long> crearExamen(CrearExamenDto dto) throws ExamenException {
-        Optional<Long> idExamen = examenRepository.crearExamen(dto);
-        if (idExamen.isPresent()) {
-            return idExamen;
-        } else {
-            throw new ExamenException("Error al crear el examen");
-        }
+    public Optional<RespuestaCrearExamenDto> crearExamen(CrearExamenDto dto) throws ExamenException {
+        return examenRepository.crearExamen(dto);
     }
 
     /**

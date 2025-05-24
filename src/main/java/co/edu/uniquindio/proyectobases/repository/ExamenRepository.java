@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
@@ -45,7 +46,7 @@ public class ExamenRepository {
      * @return Optional con el id del examen creado si fue exitoso, vacío en caso contrario
      * @throws ExamenException si no se incluyen preguntas en el examen
      */
-    public Optional<Long> crearExamen(CrearExamenDto dto) throws ExamenException {
+    public Optional<RespuestaCrearExamenDto> crearExamen(CrearExamenDto dto) throws ExamenException {
 
             // Configura el llamado al procedimiento almacenado 'crear_examen' y sus parámetros
             SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
@@ -64,8 +65,8 @@ public class ExamenRepository {
                     new SqlParameter("p_pesoEnCurso", Types.NUMERIC),
                     new SqlParameter("p_umbralAprobacion", Types.NUMERIC),
                     new SqlParameter("p_idUnidad", Types.NUMERIC),
-                    new SqlParameter("p_idEstado", Types.NUMERIC),
                     new SqlOutParameter("p_idExamen", Types.NUMERIC),
+                    new SqlOutParameter("p_idTemas", Types.NUMERIC),
                     new SqlOutParameter("p_resultado", Types.NUMERIC)
                 );
 
@@ -83,8 +84,7 @@ public class ExamenRepository {
                 .addValue("p_fechaCierre", dto.fechaCierre())
                 .addValue("p_pesoEnCurso", dto.pesoEnCurso())
                 .addValue("p_umbralAprobacion", dto.umbralAprobacion())
-                .addValue("p_idUnidad", dto.idUnidad())
-                .addValue("p_idEstado", dto.idEstado());
+                .addValue("p_idUnidad", dto.idUnidad());
 
             // Ejecuta el procedimiento y obtiene el resultado
             Map<String, Object> result = jdbcCall.execute(params);
@@ -92,11 +92,13 @@ public class ExamenRepository {
             // Recupera el resultado y el id del examen creado
             Number resultado = (Number) result.get("p_resultado");
             Number idExamen = (Number) result.get("p_idExamen");
+            Number idTema = (Number) result.get("p_idTema");
 
             // Retorna el id del examen si la operación fue exitosa
-            return resultado != null && resultado.intValue() == 1
-                ? Optional.ofNullable(idExamen).map(Number::longValue)
-                : Optional.empty();
+            if (resultado != null && resultado.intValue() == 1) {
+                return Optional.of(new RespuestaCrearExamenDto(idExamen.longValue(), idTema.longValue()));
+            }
+            return Optional.empty();
         }
 
 

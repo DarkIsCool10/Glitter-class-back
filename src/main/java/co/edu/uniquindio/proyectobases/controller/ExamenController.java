@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
@@ -47,11 +48,15 @@ public class ExamenController {
      * @throws ExamenException si ocurre un error al crear el examen
      */
     @PostMapping("/crear-examen")
-    public ResponseEntity<MensajeDto<Long>> crear(@RequestBody CrearExamenDto dto) throws ExamenException {
+    public ResponseEntity<MensajeDto<RespuestaCrearExamenDto>> crearExamen(@RequestBody CrearExamenDto dto) throws ExamenException {
         try {
-            Optional<Long> idExamen = examenService.crearExamen(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Examen creado exitosamente", idExamen.get()));
-        } catch (Exception e) {
+            Optional<RespuestaCrearExamenDto> examen = examenService.crearExamen(dto);
+            if (examen.isPresent()) {
+                return ResponseEntity.ok(new MensajeDto<>(false, "Examen creado exitosamente", examen.get()));
+            } else {
+                return ResponseEntity.badRequest().body(new MensajeDto<>(true, "Error al crear el examen", null));
+            }
+        } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(),null));
         }
     }
@@ -67,7 +72,7 @@ public class ExamenController {
         try {
             List<ObtenerExamenDto> examenes = examenService.listarExamenesDocente(idDocente);
             return ResponseEntity.ok(new MensajeDto<>(false, "Examenes obtenidos exitosamente", examenes));
-        } catch (Exception e) {
+        } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
     }
@@ -83,7 +88,7 @@ public class ExamenController {
         try {
             List<ExamenGrupoDto> examenes = examenService.listarExamenesGrupo(idGrupo);
             return ResponseEntity.ok(new MensajeDto<>(false, "Examenes obtenidos exitosamente", examenes));
-        } catch (Exception e) {
+        } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
     }
