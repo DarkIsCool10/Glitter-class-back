@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
@@ -92,7 +93,7 @@ public class ExamenRepository {
             // Recupera el resultado y el id del examen creado
             Number resultado = (Number) result.get("p_resultado");
             Number idExamen = (Number) result.get("p_idExamen");
-            Number idTema = (Number) result.get("p_idTema");
+            Number idTema = (Number) result.get("p_idTemas");
 
             // Retorna el id del examen si la operación fue exitosa
             if (resultado != null && resultado.intValue() == 1) {
@@ -235,6 +236,31 @@ public class ExamenRepository {
         Map<String, Object> result = jdbcCall.execute(params);
         return ((Number) result.get("p_resultado")).intValue();
     }
+
+    /**
+     * Actualiza la cantidad de preguntas usando un DTO
+     * @param dto DTO con los datos de actualización
+     * @return Map con los resultados
+     * @throws ExamenException si ocurre un error
+     */
+    public Map<String, Object> actualizarCantidadPreguntas(cantidadPreguntasDto dto) throws ExamenException {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+            .withProcedureName("actualizar_datos_examen")
+            .declareParameters(
+                new SqlParameter("p_idExamen", Types.NUMERIC),
+                new SqlParameter("p_totalPreguntas", Types.NUMERIC),
+                new SqlParameter("p_preguntasMostrar", Types.NUMERIC),
+                new SqlOutParameter("p_resultado", Types.INTEGER)
+            );
+        
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("p_idExamen", dto.idExamen())
+            .addValue("p_totalPreguntas", dto.totalPreguntas())
+            .addValue("p_preguntasMostrar", dto.preguntasMostrar());
+        
+        Map<String, Object> result = jdbcCall.execute(params);
+        return result;
+}
 
 
 }

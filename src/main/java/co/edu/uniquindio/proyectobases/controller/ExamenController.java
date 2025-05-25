@@ -1,6 +1,7 @@
 package co.edu.uniquindio.proyectobases.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
@@ -105,6 +107,22 @@ public class ExamenController {
         try {
             examenService.agregarPreguntaAExamen(idExamen, idPregunta);
             return ResponseEntity.ok(new MensajeDto<>(false, "Pregunta agregada exitosamente", null));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Actualiza la cantidad de preguntas de un examen.
+     * @param dto DTO con los datos de actualización
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al actualizar la cantidad de preguntas
+     */
+    @PostMapping("/actualizar-cantidad-preguntas")
+    public ResponseEntity<MensajeDto<Map<String, Object>>> actualizarCantidadPreguntas(@RequestBody cantidadPreguntasDto dto) throws ExamenException {
+        try {
+            Map<String, Object> result = examenService.actualizarCantidadPreguntas(dto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Cantidad de preguntas actualizada exitosamente", result));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }

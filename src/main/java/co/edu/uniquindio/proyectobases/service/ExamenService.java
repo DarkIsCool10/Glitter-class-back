@@ -5,10 +5,12 @@ import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -83,6 +85,18 @@ public class ExamenService {
         } else if (resultado != 1) {
             throw new ExamenException("Error al agregar la pregunta al examen.");
         }
+    }
+
+    /**
+     * Actualiza la cantidad de preguntas de un examen en la base de datos.
+     * Si la operación es exitosa, retorna el resultado; en caso contrario, retorna null y marca el mensaje como error.
+     *
+     * @param dto DTO con los datos de actualización
+     * @return Map con los resultados
+     * @throws ExamenException si ocurre un error al actualizar la cantidad de preguntas
+     */
+    public Map<String, Object> actualizarCantidadPreguntas(cantidadPreguntasDto dto) throws ExamenException {
+        return examenRepository.actualizarCantidadPreguntas(dto);
     }
 
 }
