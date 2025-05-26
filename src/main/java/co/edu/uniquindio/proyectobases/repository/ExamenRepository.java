@@ -14,10 +14,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
 /**
@@ -260,8 +260,40 @@ public class ExamenRepository {
         
         Map<String, Object> result = jdbcCall.execute(params);
         return result;
-}
+    }
+    
+    /**
+     * Genera un examen para un estudiante
+     * @param idExamen identificador del examen
+     * @param idEstudiante identificador del estudiante
+     * @return Integer con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int generarExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+            .withProcedureName("generar_examen_estudiante")
+            .declareParameters(
+                new SqlParameter("p_idExamen", Types.NUMERIC),
+                new SqlParameter("p_idEstudiante", Types.NUMERIC),
+                new SqlOutParameter("p_resultado", Types.INTEGER)
+            );
+    
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("p_idExamen", idExamen)
+            .addValue("p_idEstudiante", idEstudiante);
+    
+        Map<String, Object> result = jdbcCall.execute(params);
+    
+        Integer resultado = (Integer) result.get("p_resultado");
+        if (resultado == null || resultado != 1) {
+            throw new ExamenException("No se pudo generar el examen para el estudiante.");
+        }
+        return resultado;
+    }
+   
+    
 
+    
 
 }
 

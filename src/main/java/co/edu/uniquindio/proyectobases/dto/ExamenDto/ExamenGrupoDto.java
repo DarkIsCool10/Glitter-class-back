@@ -1,4 +1,4 @@
-package co.edu.uniquindio.proyectobases.dto.PreguntaDto;
+package co.edu.uniquindio.proyectobases.dto.ExamenDto;
 
 import java.sql.Timestamp;
 

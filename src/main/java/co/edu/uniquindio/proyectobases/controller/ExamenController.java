@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
-import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
 
@@ -123,6 +123,23 @@ public class ExamenController {
         try {
             Map<String, Object> result = examenService.actualizarCantidadPreguntas(dto);
             return ResponseEntity.ok(new MensajeDto<>(false, "Cantidad de preguntas actualizada exitosamente", result));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Genera un examen para un estudiante.
+     * @param idExamen identificador del examen
+     * @param idEstudiante identificador del estudiante
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al generar el examen
+     */
+    @PostMapping("/generar-examen-estudiante/{idExamen}/{idEstudiante}")
+    public ResponseEntity<MensajeDto<Integer>> generarExamenEstudiante(@PathVariable Long idExamen, @PathVariable Long idEstudiante) throws ExamenException {
+        try {
+            int result = examenService.generarExamenEstudiante(idExamen, idEstudiante);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen generado exitosamente", result));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
