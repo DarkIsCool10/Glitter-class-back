@@ -138,4 +138,13 @@ public class ExamenService {
         return examenRepository.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion);
     }
     
+    /**
+     * Finaliza un intento y obtiene la calificación
+     * @param idIntento identificador del intento
+     * @return Optional con la calificación si la operación fue exitosa
+     * @throws ExamenException si ocurre un error
+     */
+    public Optional<Double> finalizarIntentoYObtenerCalificacion(Long idIntento) throws ExamenException {
+        return examenRepository.finalizarIntentoYObtenerCalificacion(idIntento);
+    }
 }

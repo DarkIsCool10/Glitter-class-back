@@ -393,7 +393,33 @@ public class ExamenRepository {
         return result.get("p_resultado") != null ? ((Number) result.get("p_resultado")).intValue() : -1;
     }
 
-
+    /**
+     * Finaliza un intento y obtiene la calificación
+     * @param idIntento identificador del intento
+     * @return Optional con la calificación si la operación fue exitosa
+     * @throws ExamenException si ocurre un error
+     */
+    public Optional<Double> finalizarIntentoYObtenerCalificacion(Long idIntento) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+            .withProcedureName("finalizar_intento")
+            .declareParameters(
+                new SqlParameter("p_idIntento", Types.NUMERIC),
+                new SqlOutParameter("p_resultado", Types.NUMERIC),
+                new SqlOutParameter("p_calificacion", Types.NUMERIC)
+            );
+    
+        MapSqlParameterSource params = new MapSqlParameterSource()
+            .addValue("p_idIntento", idIntento);
+    
+        Map<String, Object> result = jdbcCall.execute(params);
+    
+        int resultado = ((Number) result.get("p_resultado")).intValue();
+        if (resultado == 1) {
+            Number calificacion = (Number) result.get("p_calificacion");
+            return Optional.ofNullable(calificacion != null ? calificacion.doubleValue() : null);
+        }
+        return Optional.empty();
+    }
     
 }
 

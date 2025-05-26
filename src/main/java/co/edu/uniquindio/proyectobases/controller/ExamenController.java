@@ -183,5 +183,21 @@ public class ExamenController {
         }
     }
 
+    /**
+     * Finaliza un intento y obtiene la calificación
+     * @param idIntento identificador del intento
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al finalizar el intento
+     */
+    @PostMapping("/finalizar-intento-obtener-calificacion/{idIntento}")
+    public ResponseEntity<MensajeDto<Double>> finalizarIntentoYObtenerCalificacion(@PathVariable Long idIntento) throws ExamenException {
+        try {
+            Optional<Double> result = examenService.finalizarIntentoYObtenerCalificacion(idIntento);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Calificación obtenida exitosamente", result.get()));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
 }
 
