@@ -19,6 +19,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 import co.edu.uniquindio.proyectobases.service.ExamenService;
 
@@ -140,6 +141,23 @@ public class ExamenController {
         try {
             int result = examenService.generarExamenEstudiante(idExamen, idEstudiante);
             return ResponseEntity.ok(new MensajeDto<>(false, "Examen generado exitosamente", result));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Obtiene un examen para un estudiante
+     * @param idExamen identificador del examen
+     * @param idEstudiante identificador del estudiante
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al obtener el examen
+     */
+    @GetMapping("/obtener-examen-estudiante/{idExamen}/{idEstudiante}")
+    public ResponseEntity<MensajeDto<List<PreguntaEstudianteDto>>> obtenerExamenEstudiante(@PathVariable Long idExamen, @PathVariable Long idEstudiante) throws ExamenException {
+        try {
+            List<PreguntaEstudianteDto> examen = examenService.obtenerExamenEstudiante(idExamen, idEstudiante);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen obtenido exitosamente", examen));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }

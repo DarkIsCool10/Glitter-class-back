@@ -3,6 +3,8 @@ package co.edu.uniquindio.proyectobases.repository;
 import java.util.Optional;
 
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,8 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
 /**
@@ -290,10 +294,73 @@ public class ExamenRepository {
         }
         return resultado;
     }
-   
     
+    /**
+     * Obtiene un examen para un estudiante
+     * @param idExamen identificador del examen
+     * @param idEstudiante identificador del estudiante
+     * @return List con las preguntas del examen
+     * @throws ExamenException si ocurre un error
+     */
+    @SuppressWarnings("deprecation")
+    public List<PreguntaEstudianteDto> obtenerExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
+    String sql = """
+        SELECT
+            ee.idExamenEstudiante,
+            ee.idExamen,
+            ee.idEstudiante,
+            ee.porcentajePregunta,
+            p.idPregunta,
+            p.enunciado,
+            p.idTipo,
+            p.idDocente,
+            p.idUnidad,
+            o.idOpcion,
+            o.textoOpcion,
+            o.idTipoRespuesta
+        FROM ExamenEstudiante ee
+        JOIN Pregunta p ON ee.idPregunta = p.idPregunta
+        LEFT JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
+        WHERE ee.idExamen = ?
+          AND ee.idEstudiante = ?
+        ORDER BY p.idPregunta
+    """;
 
-    
+    return jdbcTemplate.query(sql, new Object[]{idExamen, idEstudiante}, rs -> {
+        Map<Long, PreguntaEstudianteDto> preguntaMap = new LinkedHashMap<>();
+
+        while (rs.next()) {
+            Long idPregunta = rs.getLong("idPregunta");
+
+            PreguntaEstudianteDto pregunta = preguntaMap.get(idPregunta);
+            if (pregunta == null) {
+                pregunta = new PreguntaEstudianteDto(
+                    idPregunta,
+                    rs.getString("enunciado"),
+                    rs.getLong("idTipo"),
+                    rs.getLong("idDocente"),
+                    rs.getLong("idUnidad"),
+                    rs.getDouble("porcentajePregunta"),
+                    new ArrayList<>()
+                );
+                preguntaMap.put(idPregunta, pregunta);
+            }
+
+            // Verificar si la opción es nula (por LEFT JOIN)
+            if (rs.getObject("idOpcion") != null) {
+                ObtenerOpcionRespuestaDto opcion = new ObtenerOpcionRespuestaDto(
+                    rs.getLong("idOpcion"),
+                    rs.getString("textoOpcion"),
+                    rs.getLong("idTipoRespuesta")
+                );
+                pregunta.opciones().add(opcion);
+            }
+        }
+        return new ArrayList<>(preguntaMap.values());
+    });
+    }
+
+
 
 }
 

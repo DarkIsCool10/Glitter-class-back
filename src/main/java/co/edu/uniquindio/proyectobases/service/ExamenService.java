@@ -7,6 +7,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
+import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
 
 import java.util.List;
@@ -112,4 +113,14 @@ public class ExamenService {
         return examenRepository.generarExamenEstudiante(idExamen, idEstudiante);
     }
 
+    /**
+     * Obtiene un examen para un estudiante
+     * @param idExamen identificador del examen
+     * @param idEstudiante identificador del estudiante
+     * @return List con las preguntas del examen
+     * @throws ExamenException si ocurre un error
+     */
+    public List<PreguntaEstudianteDto> obtenerExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
+        return examenRepository.obtenerExamenEstudiante(idExamen, idEstudiante);
+    }
 }
