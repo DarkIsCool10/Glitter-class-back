@@ -123,4 +123,18 @@ public class ExamenService {
     public List<PreguntaEstudianteDto> obtenerExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
         return examenRepository.obtenerExamenEstudiante(idExamen, idEstudiante);
     }
+
+    /**
+     * Registra una respuesta para un estudiante
+     * @param idIntento identificador del intento
+     * @param idPregunta identificador de la pregunta
+     * @param idOpcion identificador de la opción
+     * @param tiempoEmpleado tiempo empleado en la pregunta
+     * @return Integer con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion, Integer tiempoEmpleado) throws ExamenException {
+        return examenRepository.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion, tiempoEmpleado);
+    }
+    
 }

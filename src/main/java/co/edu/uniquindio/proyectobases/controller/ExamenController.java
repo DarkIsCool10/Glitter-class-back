@@ -163,5 +163,24 @@ public class ExamenController {
         }
     }
 
+    /**
+     * Registra una respuesta para un estudiante
+     * @param idIntento identificador del intento
+     * @param idPregunta identificador de la pregunta
+     * @param idOpcion identificador de la opción
+     * @param tiempoEmpleado tiempo empleado en la pregunta
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al registrar la respuesta
+     */
+    @PostMapping("/registrar-respuesta-estudiante/{idIntento}/{idPregunta}/{idOpcion}/{tiempoEmpleado}")
+    public ResponseEntity<MensajeDto<Integer>> registrarRespuestaEstudiante(@PathVariable Long idIntento, @PathVariable Long idPregunta, @PathVariable Long idOpcion, @PathVariable Integer tiempoEmpleado) throws ExamenException {
+        try {
+            int result = examenService.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion, tiempoEmpleado);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Respuesta registrada exitosamente", result));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
 }
 

@@ -360,7 +360,36 @@ public class ExamenRepository {
     });
     }
 
+    /**
+     * Registra una respuesta para un estudiante
+     * @param idIntento identificador del intento
+     * @param idPregunta identificador de la pregunta
+     * @param idOpcion identificador de la opción
+     * @param tiempoEmpleado tiempo empleado en la pregunta
+     * @return Integer con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion, Integer tiempoEmpleado) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("registrar_respuesta_estudiante")
+                .declareParameters(
+                        new SqlParameter("p_idIntento", Types.NUMERIC),
+                        new SqlParameter("p_idPregunta", Types.NUMERIC),
+                        new SqlParameter("p_idOpcion", Types.NUMERIC),
+                        new SqlParameter("p_tiempoEmpleado", Types.NUMERIC),
+                        new SqlOutParameter("p_resultado", Types.NUMERIC)
+                );
 
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("p_idIntento", idIntento)
+                .addValue("p_idPregunta", idPregunta)
+                .addValue("p_idOpcion", idOpcion)
+                .addValue("p_tiempoEmpleado", tiempoEmpleado);
+
+        Map<String, Object> result = jdbcCall.execute(params);
+
+        return result.get("p_resultado") != null ? ((Number) result.get("p_resultado")).intValue() : -1;
+    }
 
 }
 
