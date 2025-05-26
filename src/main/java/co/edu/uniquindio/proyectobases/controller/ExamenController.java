@@ -18,6 +18,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ResultadoGeneracionExamenDTO;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
@@ -137,10 +138,10 @@ public class ExamenController {
      * @throws ExamenException si ocurre un error al generar el examen
      */
     @PostMapping("/generar-examen-estudiante/{idExamen}/{idEstudiante}")
-    public ResponseEntity<MensajeDto<Integer>> generarExamenEstudiante(@PathVariable Long idExamen, @PathVariable Long idEstudiante) throws ExamenException {
+    public ResponseEntity<MensajeDto<ResultadoGeneracionExamenDTO>> generarExamenEstudiante(@PathVariable Long idExamen, @PathVariable Long idEstudiante) throws ExamenException {
         try {
-            int result = examenService.generarExamenEstudiante(idExamen, idEstudiante);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Examen generado exitosamente", result));
+            Optional<ResultadoGeneracionExamenDTO> result = examenService.generarExamenEstudiante(idExamen, idEstudiante);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen generado exitosamente", result.get()));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
@@ -172,10 +173,10 @@ public class ExamenController {
      * @return ResponseEntity con el mensaje de respuesta
      * @throws ExamenException si ocurre un error al registrar la respuesta
      */
-    @PostMapping("/registrar-respuesta-estudiante/{idIntento}/{idPregunta}/{idOpcion}/{tiempoEmpleado}")
-    public ResponseEntity<MensajeDto<Integer>> registrarRespuestaEstudiante(@PathVariable Long idIntento, @PathVariable Long idPregunta, @PathVariable Long idOpcion, @PathVariable Integer tiempoEmpleado) throws ExamenException {
+    @PostMapping("/registrar-respuesta-estudiante/{idIntento}/{idPregunta}/{idOpcion}")
+    public ResponseEntity<MensajeDto<Integer>> registrarRespuestaEstudiante(@PathVariable Long idIntento, @PathVariable Long idPregunta, @PathVariable Long idOpcion) throws ExamenException {
         try {
-            int result = examenService.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion, tiempoEmpleado);
+            int result = examenService.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion);
             return ResponseEntity.ok(new MensajeDto<>(false, "Respuesta registrada exitosamente", result));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));

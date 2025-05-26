@@ -19,6 +19,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ResultadoGeneracionExamenDTO;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
@@ -273,12 +274,13 @@ public class ExamenRepository {
      * @return Integer con el resultado
      * @throws ExamenException si ocurre un error
      */
-    public int generarExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
+    public Optional<ResultadoGeneracionExamenDTO> generarExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
             .withProcedureName("generar_examen_estudiante")
             .declareParameters(
                 new SqlParameter("p_idExamen", Types.NUMERIC),
                 new SqlParameter("p_idEstudiante", Types.NUMERIC),
+                new SqlOutParameter("p_idIntento", Types.NUMERIC),
                 new SqlOutParameter("p_resultado", Types.INTEGER)
             );
     
@@ -287,12 +289,15 @@ public class ExamenRepository {
             .addValue("p_idEstudiante", idEstudiante);
     
         Map<String, Object> result = jdbcCall.execute(params);
-    
-        Integer resultado = (Integer) result.get("p_resultado");
-        if (resultado == null || resultado != 1) {
-            throw new ExamenException("No se pudo generar el examen para el estudiante.");
+        
+        Number idIntento = ((Number) result.get("p_idIntento"));
+        Number resultado = ((Number) result.get("p_resultado"));
+        
+        if(resultado != null && resultado.intValue() == 1) {
+            return Optional.of(new ResultadoGeneracionExamenDTO(idIntento.longValue(), resultado.intValue()));
         }
-        return resultado;
+
+        return Optional.empty();
     }
     
     /**
@@ -365,31 +370,30 @@ public class ExamenRepository {
      * @param idIntento identificador del intento
      * @param idPregunta identificador de la pregunta
      * @param idOpcion identificador de la opción
-     * @param tiempoEmpleado tiempo empleado en la pregunta
      * @return Integer con el resultado
      * @throws ExamenException si ocurre un error
      */
-    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion, Integer tiempoEmpleado) {
+    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("registrar_respuesta_estudiante")
                 .declareParameters(
                         new SqlParameter("p_idIntento", Types.NUMERIC),
                         new SqlParameter("p_idPregunta", Types.NUMERIC),
                         new SqlParameter("p_idOpcion", Types.NUMERIC),
-                        new SqlParameter("p_tiempoEmpleado", Types.NUMERIC),
                         new SqlOutParameter("p_resultado", Types.NUMERIC)
                 );
 
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("p_idIntento", idIntento)
                 .addValue("p_idPregunta", idPregunta)
-                .addValue("p_idOpcion", idOpcion)
-                .addValue("p_tiempoEmpleado", tiempoEmpleado);
-
+                .addValue("p_idOpcion", idOpcion);
+                
         Map<String, Object> result = jdbcCall.execute(params);
 
         return result.get("p_resultado") != null ? ((Number) result.get("p_resultado")).intValue() : -1;
     }
 
+
+    
 }
 

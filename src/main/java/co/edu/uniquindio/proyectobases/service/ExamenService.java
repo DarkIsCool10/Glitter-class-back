@@ -6,6 +6,7 @@ import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.ResultadoGeneracionExamenDTO;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.cantidadPreguntasDto;
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.PreguntaEstudianteDto;
 import co.edu.uniquindio.proyectobases.exception.ExamenException;
@@ -109,7 +110,7 @@ public class ExamenService {
      * @return Integer con el resultado
      * @throws ExamenException si ocurre un error al generar el examen
      */
-    public int generarExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
+    public Optional<ResultadoGeneracionExamenDTO> generarExamenEstudiante(Long idExamen, Long idEstudiante) throws ExamenException {
         return examenRepository.generarExamenEstudiante(idExamen, idEstudiante);
     }
 
@@ -133,8 +134,8 @@ public class ExamenService {
      * @return Integer con el resultado
      * @throws ExamenException si ocurre un error
      */
-    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion, Integer tiempoEmpleado) throws ExamenException {
-        return examenRepository.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion, tiempoEmpleado);
+    public int registrarRespuestaEstudiante(Long idIntento, Long idPregunta, Long idOpcion) throws ExamenException {
+        return examenRepository.registrarRespuestaEstudiante(idIntento, idPregunta, idOpcion);
     }
     
 }
