@@ -210,7 +210,11 @@ public class ExamenController {
     public ResponseEntity<MensajeDto<Integer>> editarExamen(@RequestBody EditarExamenDto dto) throws ExamenException {
         try {
             int result = examenService.editarExamen(dto);
-            return ResponseEntity.ok(new MensajeDto<>(false, "Examen editado exitosamente", result));
+            if(result == 1){
+                return ResponseEntity.ok(new MensajeDto<>(false, "Examen editado exitosamente", result));
+            }else{
+                return ResponseEntity.ok(new MensajeDto<>(true, "No se pudo editar el examen", result));
+            }
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }
