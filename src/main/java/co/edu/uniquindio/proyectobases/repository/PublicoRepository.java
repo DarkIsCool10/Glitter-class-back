@@ -201,6 +201,7 @@ public class PublicoRepository {
                 eg.nombre AS estado,
                 o.idOpcion,
                 o.textoOpcion,
+                o.textoPareja,
                 o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
@@ -242,6 +243,7 @@ public class PublicoRepository {
             opciones.add(new ObtenerOpcionRespuestaDto(
                 rs.getLong("idOpcion"),
                 rs.getString("textoOpcion"),
+                rs.getString("textoPareja"),
                 rs.getLong("idTipoRespuesta")
             ));
         });

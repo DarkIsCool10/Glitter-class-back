@@ -327,6 +327,7 @@ public class ExamenRepository {
             p.idUnidad,
             o.idOpcion,
             o.textoOpcion,
+            o.textoPareja,
             o.idTipoRespuesta
         FROM ExamenEstudiante ee
         JOIN Pregunta p ON ee.idPregunta = p.idPregunta
@@ -361,6 +362,7 @@ public class ExamenRepository {
                 ObtenerOpcionRespuestaDto opcion = new ObtenerOpcionRespuestaDto(
                     rs.getLong("idOpcion"),
                     rs.getString("textoOpcion"),
+                    rs.getString("textoPareja"),
                     rs.getLong("idTipoRespuesta")
                 );
                 pregunta.opciones().add(opcion);

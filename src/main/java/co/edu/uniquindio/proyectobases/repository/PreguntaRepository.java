@@ -154,6 +154,7 @@ public class PreguntaRepository {
                 eg.nombre AS estado,
                 o.idOpcion,
                 o.textoOpcion,
+                o.textoPareja,
                 o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
@@ -195,6 +196,7 @@ public class PreguntaRepository {
             opciones.add(new ObtenerOpcionRespuestaDto(
                 rs.getLong("idOpcion"),
                 rs.getString("textoOpcion"),
+                rs.getString("textoPareja"),
                 rs.getLong("idTipoRespuesta")
             ));
         });
@@ -226,6 +228,7 @@ public class PreguntaRepository {
                 eg.nombre AS estado,
                 o.idOpcion,
                 o.textoOpcion,
+                o.textoPareja,
                 o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
@@ -268,6 +271,7 @@ public class PreguntaRepository {
             opciones.add(new ObtenerOpcionRespuestaDto(
                 rs.getLong("idOpcion"),
                 rs.getString("textoOpcion"),
+                rs.getString("textoPareja"),
                 rs.getLong("idTipoRespuesta")
             ));
         }, idDocente);
@@ -298,6 +302,7 @@ public class PreguntaRepository {
                 eg.nombre AS estado,
                 o.idOpcion,
                 o.textoOpcion,
+                o.textoPareja,
                 o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
@@ -340,6 +345,7 @@ public class PreguntaRepository {
             pregunta.opciones().add(new ObtenerOpcionRespuestaDto(
                 rs.getLong("idOpcion"),
                 rs.getString("textoOpcion"),
+                rs.getString("textoPareja"),
                 rs.getLong("idTipoRespuesta")
             ));
         });
@@ -371,6 +377,7 @@ public class PreguntaRepository {
                 eg.nombre AS estado,
                 o.idOpcion,
                 o.textoOpcion,
+                o.textoPareja,
                 o.idTipoRespuesta
             FROM Pregunta p
             JOIN Tema t ON p.idTema = t.idTema
@@ -415,6 +422,7 @@ public class PreguntaRepository {
             pregunta.opciones().add(new ObtenerOpcionRespuestaDto(
                 rs.getLong("idOpcion"),
                 rs.getString("textoOpcion"),
+                rs.getString("textoPareja"),
                 rs.getLong("idTipoRespuesta")
             ));
         });
