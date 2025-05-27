@@ -113,9 +113,9 @@ public class PublicoController {
      * @return ResponseEntity con el mensaje de respuesta
      * @throws PublicoException si ocurre un error al obtener las preguntas
      */
-    @GetMapping("/obtener-preguntas-publicas")
-    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasPublicas() throws PublicoException {
-        return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", publicoService.obtenerPreguntasPublicas()));
+    @GetMapping("/obtener-preguntas-publicas/{idUnidad}")
+    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasPublicas(@PathVariable("idUnidad") Long idUnidad) throws PublicoException {
+        return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", publicoService.obtenerPreguntasPublicas(idUnidad)));
     }
 
     /**
@@ -190,6 +190,17 @@ public class PublicoController {
     @GetMapping("/obtener-grupos-estudiante/{idEstudiante}")
     public ResponseEntity<MensajeDto<List<ObtenerGruposIdDto>>> listarGruposEstudiante(@PathVariable("idEstudiante") Long idEstudiante) throws PublicoException {
         return ResponseEntity.ok(new MensajeDto<>(false, "Grupos obtenidos exitosamente", publicoService.obtenerGruposEstudiante(idEstudiante)));
+    }
+
+    /**
+     * Obtiene todos los temas de un grupo.
+     * @param idGrupo identificador del grupo
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PublicoException si ocurre un error al obtener los temas
+     */
+    @GetMapping("/obtener-temas-grupo/{idGrupo}")
+    public ResponseEntity<MensajeDto<List<TemaDto>>> listarTemasGrupo(@PathVariable("idGrupo") Long idGrupo) throws PublicoException {
+        return ResponseEntity.ok(new MensajeDto<>(false, "Temas obtenidos exitosamente", publicoService.obtenerTemasGrupo(idGrupo)));
     }
 
 }

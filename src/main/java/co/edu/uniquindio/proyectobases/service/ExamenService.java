@@ -147,4 +147,5 @@ public class ExamenService {
     public Optional<Double> finalizarIntentoYObtenerCalificacion(Long idIntento) throws ExamenException {
         return examenRepository.finalizarIntentoYObtenerCalificacion(idIntento);
     }
+    
 }

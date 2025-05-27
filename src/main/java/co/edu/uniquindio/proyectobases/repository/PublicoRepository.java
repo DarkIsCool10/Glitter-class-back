@@ -184,7 +184,8 @@ public class PublicoRepository {
      * Lista todas las preguntas públicas registradas en el sistema.
      * @return lista de preguntas públicas
      */
-    public List<ObtenerPreguntaDto> listarPreguntasPublicas() {
+    @SuppressWarnings("deprecation")
+    public List<ObtenerPreguntaDto> listarPreguntasPublicas(Long idUnidad) {
         String sql = """
             SELECT 
                 p.idPregunta,
@@ -210,11 +211,11 @@ public class PublicoRepository {
             JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
             JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
             JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
-            WHERE v.nombre = 'publica'
+            WHERE v.nombre = 'publica' AND ua.idUnidad = ?
         """;
     
         Map<Long, ObtenerPreguntaDto> preguntasMap = new LinkedHashMap<>();
-        jdbcTemplate.query(sql, rs -> {
+        jdbcTemplate.query(sql, new Object[]{idUnidad}, rs -> {
             Long idPregunta = rs.getLong("idPregunta");
             ObtenerPreguntaDto pregunta = preguntasMap.get(idPregunta);
     
@@ -247,7 +248,7 @@ public class PublicoRepository {
     
         return new ArrayList<>(preguntasMap.values());
     }
-    
+
     /**
      * Lista todos los exámenes registrados en el sistema con información resumida.
      * @return lista de exámenes
@@ -390,6 +391,23 @@ public class PublicoRepository {
             rs.getString("nombreCurso")
         ), idUsuario);
     }
+
+    public List<TemaDto> listarTemasGrupo(Long idGrupo){
+        String sql = """
+                    SELECT 
+                    t.idTema, 
+                    t.nombre
+                    FROM Grupo g
+                    JOIN Curso c ON g.idCurso = c.idCurso
+                    JOIN Tema t ON t.idCurso = c.idCurso
+                    WHERE g.idGrupo = ?
+                    """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new TemaDto(
+            rs.getLong("idTema"),
+            rs.getString("nombre")
+        ), idGrupo);
+    }
+
 
 
 }

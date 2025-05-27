@@ -88,5 +88,16 @@ public class PreguntaService {
     public List<ObtenerPreguntaDto> obtenerPreguntasTema(Long idTema) throws PreguntaException {
         return preguntaRepository.listarPreguntasTema(idTema);
     }
+
+    /**
+     * Obtiene una lista de preguntas filtradas por el docente y el tema.
+     *
+     * @param idDocente identificador del docente
+     * @param idTema identificador del tema
+     * @return lista de preguntas que pertenecen al docente y al tema
+     */
+    public List<ObtenerPreguntaDto> obtenerPreguntasDocenteYTema(Long idDocente, Long idTema) {
+        return preguntaRepository.listarPreguntasPorDocenteYTema(idDocente, idTema);
+    }
 }
 

@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.sql.Types;
 
 import co.edu.uniquindio.proyectobases.dto.PreguntaDto.ObtenerOpcionRespuestaDto;
@@ -310,32 +309,117 @@ public class PreguntaRepository {
             JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
             JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
             WHERE p.idTema = ?
-            ORDER BY p.fechaCreacion DESC
+            ORDER BY p.idPregunta, o.idOpcion
             """;
-        
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+    
+        Map<Long, ObtenerPreguntaDto> preguntasMap = new LinkedHashMap<>();
+    
+        jdbcTemplate.query(sql, ps -> ps.setLong(1, idTema), rs -> {
             Long idPregunta = rs.getLong("idPregunta");
-            String enunciado = rs.getString("enunciado");
-            String tema = rs.getString("tema");
-            String visibilidad = rs.getString("visibilidad");
-            String dificultad = rs.getString("dificultad");
-            String docente = rs.getString("docente");
-            String unidadAcademica = rs.getString("unidadAcademica");
-            String tipo = rs.getString("tipo");
-            Double porcentajeNota = rs.getDouble("porcentajeNota");
-            Timestamp fechaCreacion = rs.getTimestamp("fechaCreacion");
-            String estado = rs.getString("estado");
-            
-            List<ObtenerOpcionRespuestaDto> opciones = new ArrayList<>();
-            while (rs.next()) {
-                Long idOpcion = rs.getLong("idOpcion");
-                String textoOpcion = rs.getString("textoOpcion");
-                Long idTipoRespuesta = rs.getLong("idTipoRespuesta");
-                opciones.add(new ObtenerOpcionRespuestaDto(idOpcion, textoOpcion, idTipoRespuesta));
+            ObtenerPreguntaDto pregunta = preguntasMap.get(idPregunta);
+    
+            if (pregunta == null) {
+                pregunta = new ObtenerPreguntaDto(
+                    idPregunta,
+                    rs.getString("enunciado"),
+                    rs.getString("tema"),
+                    rs.getString("visibilidad"),
+                    rs.getString("dificultad"),
+                    rs.getString("docente"),
+                    rs.getString("unidadAcademica"),
+                    rs.getString("tipo"),
+                    rs.getDouble("porcentajeNota"),
+                    rs.getTimestamp("fechaCreacion"),
+                    rs.getString("estado"),
+                    new ArrayList<>()
+                );
+                preguntasMap.put(idPregunta, pregunta);
             }
+    
+            // Agregar opción correspondiente
+            pregunta.opciones().add(new ObtenerOpcionRespuestaDto(
+                rs.getLong("idOpcion"),
+                rs.getString("textoOpcion"),
+                rs.getLong("idTipoRespuesta")
+            ));
+        });
+    
+        return new ArrayList<>(preguntasMap.values());
+    }
+    
 
-            return new ObtenerPreguntaDto(idPregunta, enunciado, tema, visibilidad, dificultad, docente, unidadAcademica, tipo, porcentajeNota, fechaCreacion, estado, opciones);
-        }, idTema);
+    /**
+     * Lista las preguntas filtradas por el docente y el tema.
+     *
+     * @param idDocente identificador del docente
+     * @param idTema identificador del tema
+     * @return lista de preguntas que pertenecen al docente y al tema
+     */
+    public List<ObtenerPreguntaDto> listarPreguntasPorDocenteYTema(Long idDocente, Long idTema) {
+        String sql = """
+            SELECT 
+                p.idPregunta,
+                p.enunciado,
+                t.nombre AS tema,
+                v.nombre AS visibilidad,
+                d.nombre AS dificultad,
+                u.nombre || ' ' || u.apellido AS docente,
+                ua.nombre AS unidadAcademica,
+                tp.nombre AS tipoPregunta,
+                p.porcentajeNota,
+                p.fechaCreacion,
+                eg.nombre AS estado,
+                o.idOpcion,
+                o.textoOpcion,
+                o.idTipoRespuesta
+            FROM Pregunta p
+            JOIN Tema t ON p.idTema = t.idTema
+            JOIN VisibilidadPregunta v ON p.idVisibilidad = v.idVisibilidad
+            JOIN DificultadPregunta d ON p.idDificultad = d.idDificultad
+            JOIN Usuario u ON p.idDocente = u.idUsuario
+            JOIN UnidadAcademica ua ON p.idUnidad = ua.idUnidad
+            JOIN TipoPregunta tp ON p.idTipo = tp.idTipo
+            JOIN EstadoGeneral eg ON p.idEstado = eg.idEstado
+            JOIN OpcionRespuesta o ON p.idPregunta = o.idPregunta
+            WHERE u.idUsuario = ? AND t.idTema = ?
+            ORDER BY p.idPregunta
+        """;
+    
+        Map<Long, ObtenerPreguntaDto> preguntasMap = new LinkedHashMap<>();
+        jdbcTemplate.query(sql, ps -> {
+            ps.setLong(1, idDocente);
+            ps.setLong(2, idTema);
+        }, rs -> {
+            Long idPregunta = rs.getLong("idPregunta");
+            ObtenerPreguntaDto pregunta = preguntasMap.get(idPregunta);
+    
+            if (pregunta == null) {
+                pregunta = new ObtenerPreguntaDto(
+                    idPregunta,
+                    rs.getString("enunciado"),
+                    rs.getString("tema"),
+                    rs.getString("visibilidad"),
+                    rs.getString("dificultad"),
+                    rs.getString("docente"),
+                    rs.getString("unidadAcademica"),
+                    rs.getString("tipoPregunta"),
+                    rs.getDouble("porcentajeNota"),
+                    rs.getTimestamp("fechaCreacion"),
+                    rs.getString("estado"),
+                    new ArrayList<>()
+                );
+                preguntasMap.put(idPregunta, pregunta);
+            }
+    
+            // Agregar opción de respuesta
+            pregunta.opciones().add(new ObtenerOpcionRespuestaDto(
+                rs.getLong("idOpcion"),
+                rs.getString("textoOpcion"),
+                rs.getLong("idTipoRespuesta")
+            ));
+        });
+    
+        return new ArrayList<>(preguntasMap.values());
     }
 
 }

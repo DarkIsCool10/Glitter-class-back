@@ -290,14 +290,19 @@ public class ExamenRepository {
     
         Map<String, Object> result = jdbcCall.execute(params);
         
-        Number idIntento = ((Number) result.get("p_idIntento"));
-        Number resultado = ((Number) result.get("p_resultado"));
+        Number idIntento = (Number) result.get("p_idIntento");
+        Number resultado = (Number) result.get("p_resultado");
         
-        if(resultado != null && resultado.intValue() == 1) {
-            return Optional.of(new ResultadoGeneracionExamenDTO(idIntento.longValue(), resultado.intValue()));
+        if (resultado == null) {
+            throw new ExamenException("No se pudo obtener el resultado del procedimiento.");
         }
-
-        return Optional.empty();
+        if (resultado.intValue() == 1) {
+            return Optional.of(new ResultadoGeneracionExamenDTO(idIntento.longValue(), resultado.intValue()));
+        } else if (resultado.intValue() == -1) {
+            throw new ExamenException("Ya existe un intento para este estudiante en este examen.");
+        } else {
+            throw new ExamenException("Error inesperado al generar el examen para el estudiante.");
+        }
     }
     
     /**
@@ -414,12 +419,15 @@ public class ExamenRepository {
         Map<String, Object> result = jdbcCall.execute(params);
     
         int resultado = ((Number) result.get("p_resultado")).intValue();
+        Number calificacion = (Number) result.get("p_calificacion");
+
         if (resultado == 1) {
-            Number calificacion = (Number) result.get("p_calificacion");
             return Optional.ofNullable(calificacion != null ? calificacion.doubleValue() : null);
         }
         return Optional.empty();
     }
+
+    
     
 }
 

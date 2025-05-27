@@ -102,4 +102,18 @@ public class PreguntaController {
         return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
     }
 
+    /**
+     * Obtiene una lista de preguntas filtradas por el docente y el tema.
+     *
+     * @param idDocente identificador del docente
+     * @param idTema identificador del tema
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws PreguntaException si ocurre un error al obtener las preguntas
+     */
+    @GetMapping("/obtener-preguntas-docente-tema/{idDocente}/{idTema}")
+    public ResponseEntity<MensajeDto<List<ObtenerPreguntaDto>>> listarPreguntasDocenteYTema(@PathVariable("idDocente") Long idDocente, @PathVariable("idTema") Long idTema) throws PreguntaException {
+        List<ObtenerPreguntaDto> preguntas = preguntaService.obtenerPreguntasDocenteYTema(idDocente, idTema);
+        return ResponseEntity.ok(new MensajeDto<>(false, "Preguntas obtenidas exitosamente", preguntas));
+    }
+
 }

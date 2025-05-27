@@ -109,8 +109,8 @@ public class PublicoService {
      * @return lista de preguntas públicas
      * @throws PublicoException si ocurre un error al consultar las preguntas
      */
-    public List<ObtenerPreguntaDto> obtenerPreguntasPublicas() throws PublicoException {
-        return publicoRepository.listarPreguntasPublicas();
+    public List<ObtenerPreguntaDto> obtenerPreguntasPublicas(Long idUnidad) throws PublicoException {
+        return publicoRepository.listarPreguntasPublicas(idUnidad);
     }
 
     /**
@@ -186,4 +186,16 @@ public class PublicoService {
     public List<ObtenerGruposIdDto> obtenerGruposEstudiante(Long idUsuario) throws PublicoException {
         return publicoRepository.listarGruposEstudiante(idUsuario);
     }
+
+    /**
+     * Obtiene la lista de temas asociados a un grupo específico.
+     *
+     * @param idGrupo identificador del grupo
+     * @return lista de temas del grupo
+     * @throws PublicoException si ocurre un error al consultar los temas
+     */
+    public List<TemaDto> obtenerTemasGrupo(Long idGrupo) throws PublicoException {
+        return publicoRepository.listarTemasGrupo(idGrupo);
+    }
+
 }
