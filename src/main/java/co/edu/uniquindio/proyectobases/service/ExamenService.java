@@ -3,6 +3,7 @@ package co.edu.uniquindio.proyectobases.service;
 import org.springframework.stereotype.Service;
 import co.edu.uniquindio.proyectobases.repository.ExamenRepository;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.EditarExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
@@ -148,4 +149,24 @@ public class ExamenService {
         return examenRepository.finalizarIntentoYObtenerCalificacion(idIntento);
     }
     
+    /**
+     * Edita un examen
+     * @param dto DTO con los datos del examen
+     * @return int con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int editarExamen(EditarExamenDto dto) throws ExamenException {
+        return examenRepository.editarExamen(dto);
+    }
+    
+    /**
+     * Elimina un examen
+     * @param idExamen identificador del examen
+     * @return int con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int eliminarExamen(Long idExamen) throws ExamenException {
+        return examenRepository.eliminarExamen(idExamen);
+    }
+
 }

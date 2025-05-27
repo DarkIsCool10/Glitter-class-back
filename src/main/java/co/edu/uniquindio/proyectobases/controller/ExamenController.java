@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.uniquindio.proyectobases.dto.MensajeDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.EditarExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
@@ -194,6 +195,38 @@ public class ExamenController {
         try {
             Optional<Double> result = examenService.finalizarIntentoYObtenerCalificacion(idIntento);
             return ResponseEntity.ok(new MensajeDto<>(false, "Calificación obtenida exitosamente", result.get()));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Edita un examen
+     * @param dto DTO con los datos del examen
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al editar el examen
+     */
+    @PostMapping("/editar-examen")
+    public ResponseEntity<MensajeDto<Integer>> editarExamen(@RequestBody EditarExamenDto dto) throws ExamenException {
+        try {
+            int result = examenService.editarExamen(dto);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen editado exitosamente", result));
+        } catch (ExamenException e) {
+            return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
+        }
+    }
+
+    /**
+     * Elimina un examen
+     * @param idExamen identificador del examen
+     * @return ResponseEntity con el mensaje de respuesta
+     * @throws ExamenException si ocurre un error al eliminar el examen
+     */
+    @PostMapping("/eliminar-examen/{idExamen}")
+    public ResponseEntity<MensajeDto<Integer>> eliminarExamen(@PathVariable Long idExamen) throws ExamenException {
+        try {
+            int result = examenService.eliminarExamen(idExamen);
+            return ResponseEntity.ok(new MensajeDto<>(false, "Examen eliminado exitosamente", result));
         } catch (ExamenException e) {
             return ResponseEntity.badRequest().body(new MensajeDto<>(true, e.getMessage(), null));
         }

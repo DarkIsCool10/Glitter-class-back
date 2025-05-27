@@ -1,9 +1,9 @@
 package co.edu.uniquindio.proyectobases.repository;
 
 import java.util.Optional;
-
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.CrearExamenDto;
+import co.edu.uniquindio.proyectobases.dto.ExamenDto.EditarExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ExamenGrupoDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.ObtenerExamenDto;
 import co.edu.uniquindio.proyectobases.dto.ExamenDto.RespuestaCrearExamenDto;
@@ -429,7 +430,63 @@ public class ExamenRepository {
         return Optional.empty();
     }
 
+    /**
+     * Edita un examen
+     * @param dto DTO con los datos del examen
+     * @return int con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int editarExamen(EditarExamenDto dto) {
+
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("editar_examen")
+                .declareParameters(
+                        new SqlParameter("p_idExamen", Types.NUMERIC),
+                        new SqlParameter("p_titulo", Types.VARCHAR),
+                        new SqlParameter("p_descripcion", Types.CLOB),
+                        new SqlParameter("p_preguntasMostradas", Types.NUMERIC),
+                        new SqlParameter("p_tiempoLimite", Types.NUMERIC),
+                        new SqlParameter("p_fechaDisponible", Types.TIMESTAMP),
+                        new SqlParameter("p_fechaCierre", Types.TIMESTAMP),
+                        new SqlParameter("p_pesoEnCurso", Types.NUMERIC),
+                        new SqlParameter("p_umbralAprobacion", Types.NUMERIC),
+                        new SqlOutParameter("p_resultado", Types.NUMERIC)
+                );
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("p_idExamen", dto.idExamen());
+        params.put("p_titulo", dto.titulo());
+        params.put("p_descripcion", dto.descripcion());
+        params.put("p_preguntasMostradas", dto.preguntasMostradas());
+        params.put("p_tiempoLimite", dto.tiempoLimite());
+        params.put("p_fechaDisponible", dto.fechaDisponible());
+        params.put("p_fechaCierre", dto.fechaCierre());
+        params.put("p_pesoEnCurso", dto.pesoEnCurso());
+        params.put("p_umbralAprobacion", dto.umbralAprobacion());
+
+        Map<String, Object> result = jdbcCall.execute(params);
+        return ((Number) result.get("p_resultado")).intValue();
+    }
     
-    
+    /**
+     * Elimina un examen
+     * @param idExamen identificador del examen
+     * @return int con el resultado
+     * @throws ExamenException si ocurre un error
+     */
+    public int eliminarExamen(Long idExamen) {
+        SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName("eliminar_examen")
+                .declareParameters(
+                        new SqlParameter("p_idExamen", Types.NUMERIC),
+                        new SqlOutParameter("p_resultado", Types.NUMERIC)
+                );
+
+        Map<String, Object> params = Map.of("p_idExamen", idExamen);
+        Map<String, Object> result = jdbcCall.execute(params);
+
+        return ((Number) result.get("p_resultado")).intValue();
+    }
+
 }
 
